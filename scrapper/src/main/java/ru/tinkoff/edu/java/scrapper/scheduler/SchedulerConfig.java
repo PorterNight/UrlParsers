@@ -8,6 +8,7 @@ import java.time.Duration;
 @Configuration
 @ConfigurationProperties
 public class SchedulerConfig {
+
     private Scheduler scheduler;
 
     public Scheduler getScheduler() {

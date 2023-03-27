@@ -1,20 +1,20 @@
-package ru.tinkoff.edu.java.scrapper.exceptions;
+package ru.tinkoff.edu.java.bot.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.tinkoff.edu.java.scrapper.dto.ApiErrorResponse;
+import ru.tinkoff.edu.java.bot.dto.LinkUpdateErrorResponse;
 
 @RestControllerAdvice
-public class ScrapperControllerExceptionHandler {
+public class BotControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ScrapperControllerException.class})
-    public ResponseEntity<ApiErrorResponse> botClientException(ScrapperControllerException ex) {
+    @ExceptionHandler({BotControllerException.class})
+    public ResponseEntity<LinkUpdateErrorResponse> botClientException(BotControllerException ex) {
 
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
+        LinkUpdateErrorResponse errorResponse = new LinkUpdateErrorResponse(
                 "Некорректные параметры запроса",                 // String description,
                 String.valueOf(ex.getCode()),    // String code,
                 ex.getClass().toString(),        // String exceptionName,

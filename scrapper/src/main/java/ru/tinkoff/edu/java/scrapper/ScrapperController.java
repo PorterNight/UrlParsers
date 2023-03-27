@@ -1,98 +1,65 @@
 package ru.tinkoff.edu.java.scrapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tinkoff.edu.java.scrapper.exceptions.*;
 import ru.tinkoff.edu.java.scrapper.dto.*;
-
-import java.util.Map;
+import ru.tinkoff.edu.java.scrapper.service.ScrapperService;
+import ru.tinkoff.edu.java.scrapper.service.dto.*;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/scrapper")
 public class ScrapperController {
 
-//    private final ScrapperService service;
+    private final ScrapperService service;
+
+    public ScrapperController(ScrapperService service) {
+        this.service = service;
+    }
+
 
     @PostMapping("/tg-chat/{id}")
-    public ResponseEntity<String> registerChatById(@PathVariable Long id) {
+    public ResponseEntity<String> registerChatById(@PathVariable long id) {
 
-        if (id.equals(555L)) {
-            throw new BadRequestException("Чат уже зарегистрирован");
-        }
-        AddLinkRequest addLinkRequest = new AddLinkRequest(id);
-        return ResponseEntity.ok("Чат зарегистрирован");
+        RegisterChatDto registerChatDto = new RegisterChatDto(id);
+        String result = service.registerChat(registerChatDto);
+
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/tg-chat/{id}")
-    public ResponseEntity<String> deleteChat(@PathVariable Long id) {
+    public ResponseEntity<String> deleteChatByID(@PathVariable long id) {
 
-        if (id.equals(555L)) {
-            throw new BadRequestException("Ошибка удаления чата");
-        }
-        if (id < 0) {
-            throw new NotFoundException("Чат не существует");
-        }
-        DeleteChatRequest deleteChatRequest = new DeleteChatRequest(id);
-        return ResponseEntity.ok("Чат успешно удален");
+        DeleteChatDto deleteChatDto = new DeleteChatDto(id);
+        String result = service.deleteChat(deleteChatDto);
+
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/links")
-    public ResponseEntity<ListLinksResponse> getLinks(@RequestHeader Long tgChatId) {
+    @GetMapping(value = "/links", produces = "application/json")
+    public ResponseEntity<ListLinksResponse> getLinks(@RequestHeader long tgChatId) {
 
-        if (tgChatId < 0) {
-            throw new BadRequestException("Ошибка получения ссылок");
-        }
+        GetLinksDto getLinksDto = new GetLinksDto(tgChatId);
+        ListLinksResponse result = service.getLinks(getLinksDto);
 
-        return ResponseEntity.ok(new ListLinksResponse());
-
+        return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/links")
-    public ResponseEntity<LinkResponse> addLink(@RequestHeader Long tgChatId, @RequestBody AddLinkRequest request) {
+    @PostMapping(value = "/links", produces = "application/json")
+    public ResponseEntity<LinkResponse> addLink(@RequestHeader long tgChatId, @RequestBody AddLinkRequest request) {
 
-        if (tgChatId < 0) {
-            throw new BadRequestException("Ошибка получения ссылок");
-        }
-        AddLinkRequest addLinkRequest = request;
-        return ResponseEntity.ok(new LinkResponse());
+        AddLinkDto addLinkDto = new AddLinkDto(tgChatId, request.link());
+        LinkResponse result = service.addLink(addLinkDto);
+
+        return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/links")
-    public ResponseEntity<String> removeLink(@RequestHeader Long tgChatId, @RequestBody RemoveLinkRequest request) {
+    @DeleteMapping(value = "/links", produces = "application/json")
+    public ResponseEntity<LinkResponse> removeLink(@RequestHeader long tgChatId, @RequestBody RemoveLinkRequest request) {
 
-        if (tgChatId.equals(555L)) {
-            throw new BadRequestException("Чат уже зарегистрирован");
-        }
-        if (tgChatId < 0) {
-            throw new NotFoundException("Ссылка не найдена");
-        }
+        RemoveLinkDto removeLinkDto = new RemoveLinkDto(tgChatId, request.link());
+        LinkResponse result = service.removeLink(removeLinkDto);
 
-        RemoveLinkRequest req = request;
-        return ResponseEntity.ok("Ссылка успешно убрана");
-    }
-
-
-// Github and Stackoverflow web clients:
-
-    @Autowired
-    private StackOverflowClient stackOverflowClient;
-
-    @GetMapping("/stackoverflow/{questionId}")
-    public ResponseEntity<QuestionResponse> getQuestionInfo(@PathVariable int questionId) {
-        QuestionResponse questionResponse = stackOverflowClient.fetchQuestionInfo(questionId);
-        System.out.println(questionResponse.toString());
-        return ResponseEntity.ok(questionResponse);
-    }
-
-    @Autowired
-    private GitHubClient gitHubClient;
-
-    @GetMapping("/github/{owner}")
-    public ResponseEntity<String> getRepositoryInfo(@PathVariable String owner) {
-        Map<String,RepoResponse> repoResponse = gitHubClient.getUserRepositories(owner).blockLast();
-        System.out.println(repoResponse.toString());
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(result);
     }
 }
 

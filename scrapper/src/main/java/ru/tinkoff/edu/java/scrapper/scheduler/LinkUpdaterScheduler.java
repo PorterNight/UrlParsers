@@ -20,7 +20,7 @@ public class LinkUpdaterScheduler {
 
     @Scheduled(fixedDelayString = "#{T(java.time.Duration).parse('${scheduler.interval}').toMillis()}")
     public void update() {
-        log.info("Updating links from data base");
+        log.info("Updating links from data base..");
     }
 
 }

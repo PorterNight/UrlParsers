@@ -3,24 +3,26 @@ package ru.tinkoff.edu.java.bot;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tinkoff.edu.java.bot.dto.LinkUpdateRequest;
+import ru.tinkoff.edu.java.bot.dto.LinkUpdate;
+import ru.tinkoff.edu.java.bot.service.BotService;
+import ru.tinkoff.edu.java.bot.service.dto.UpdateLinkDto;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("bot/")
 public class BotController {
 
-//    private final BotService service;
+    private final BotService service;
 
-    @PostMapping("/updates")
-    public ResponseEntity<String> handleUpdate(@Valid @RequestBody LinkUpdateRequest linkUpdate) {
+    public BotController(BotService service) {
+        this.service = service;
+    }
 
-        if (linkUpdate.getId() < 0) {
-            throw new IllegalArgumentException("Wrong ID");
-        }
-        if (linkUpdate.getUrl() == "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c") {
-            throw new IllegalStateException("Link already exists");
-        }
-        return ResponseEntity.ok("Update processed");
+    @PostMapping(value="/updates", produces = "application/json")
+    public ResponseEntity<String> handleUpdate(@Valid @RequestBody LinkUpdate link) {
+        UpdateLinkDto linkDto = new UpdateLinkDto(link.id(), link.url());
+        String result = service.updateLink(linkDto);
+
+        return ResponseEntity.ok(result);
     }
 }
 
