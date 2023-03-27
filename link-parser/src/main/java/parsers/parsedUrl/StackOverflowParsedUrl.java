@@ -1,4 +1,3 @@
-//package ru.tinkoff.edu.java.linkParser;
-package parser;
+package parsers.parsedUrl;
 
 public record StackOverflowParsedUrl(int id) implements ParsedUrl {}

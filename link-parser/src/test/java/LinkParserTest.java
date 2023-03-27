@@ -1,7 +1,10 @@
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import parser.*;
+import parsers.*;
+import parsers.GithubUrlParser;
+import parsers.UrlParser;
+import parsers.parsedUrl.ParsedUrl;
 
 public class LinkParserTest {
 

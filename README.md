@@ -6,7 +6,7 @@ Stackoverflow and Github parsers for Tinkoff educaton task.
 
 ## Run test
 
-  link-parser/src/test/java/LinkParserTest.java
+  link-parsers/src/test/java/LinkParserTest.java
 
 ## Author
 
