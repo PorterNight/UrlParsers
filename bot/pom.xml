@@ -60,6 +60,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.pengrad</groupId>
+            <artifactId>java-telegram-bot-api</artifactId>
+            <version>6.3.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>ru.tinkoff.edu</groupId>
             <artifactId>Scrapper</artifactId>
             <version>1.0</version>
