@@ -6,20 +6,20 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.telegramBot.Command;
 
 @Service
-public class TrackCommand implements Command {
+public class UntrackCommand implements Command {
 
     public String command() {
-        return BotCommand.TRACK.getCommand();
+        return BotCommand.UNTRACK.getCommand();
     }
 
     @Override
     public boolean supports(Update update) {
-        return BotCommand.TRACK.getCommand().equals(update.message().text());
+        return BotCommand.UNTRACK.getCommand().equals(update.message().text());
     }
 
     @Override
     public SendMessage handle(Update update) {
         long chatId = update.message().chat().id();
-        return new SendMessage(chatId, BotCommand.TRACK_SAVE.getCommand().toString());
+        return new SendMessage(chatId,  BotCommand.UNTRACK_SAVE.getCommand().toString());
     }
 }

@@ -1,40 +1,40 @@
 package ru.tinkoff.edu.java.bot.telegramBot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import ru.tinkoff.edu.java.bot.telegramBot.interfaces.Command;
-import ru.tinkoff.edu.java.bot.telegramBot.interfaces.UserMessageProcessor;
+import com.pengrad.telegrambot.request.SendMessage;
+import org.springframework.stereotype.Service;
+import ru.tinkoff.edu.java.bot.repository.UserRepository;
+import ru.tinkoff.edu.java.bot.telegramBot.Command;
 
-import java.util.HashMap;
-import java.util.Map;
-
+@Service
 public class StartCommand implements Command {
 
-    private static Map<String, Boolean> userList = new HashMap<>();
+    private UserRepository repo;
+
+    public StartCommand(UserRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
     public String command() {
-        return "/Start";
+        return BotCommand.START.getCommand();
     }
 
     @Override
-    public String description() {
-        return "command is used for user registration";
+    public boolean supports(Update update) {
+        return BotCommand.START.getCommand().equals(update.message().text());
     }
 
+
     @Override
-    public String handle(Update update, UserMessageProcessor proc) {
+    public SendMessage handle(Update update) {
 
-        String url = update.message().text();
+        long chatId = update.message().chat().id();
+        String userFirstName = update.message().from().firstName();
 
-        System.out.println(userList);
-
-        if (!userList.getOrDefault(url, false)) {
-            userList.put(url, true);
-            return ("User " + url + " registered");
-        } else
-            return ("User " + url + " already registered");
-
-
-
+        if (repo.registerUser(chatId))
+            return new SendMessage(chatId, "User: " + userFirstName + " is registered");
+        else
+            return new SendMessage(chatId, "User: " + userFirstName + " is already registered");
     }
 }

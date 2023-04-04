@@ -6,6 +6,9 @@ import ru.tinkoff.edu.java.scrapper.dto.*;
 import ru.tinkoff.edu.java.scrapper.service.ScrapperService;
 import ru.tinkoff.edu.java.scrapper.service.dto.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 @RestController
 @RequestMapping("/scrapper")
 public class ScrapperController {
@@ -47,8 +50,12 @@ public class ScrapperController {
     @PostMapping(value = "/links", produces = "application/json")
     public ResponseEntity<LinkResponse> addLink(@RequestHeader long tgChatId, @RequestBody AddLinkRequest request) {
 
+        System.out.println("Scrapper chat start : " + tgChatId);
+
         AddLinkDto addLinkDto = new AddLinkDto(tgChatId, request.link());
         LinkResponse result = service.addLink(addLinkDto);
+
+        System.out.println("Scrapper : link added:" + result);
 
         return ResponseEntity.ok(result);
     }

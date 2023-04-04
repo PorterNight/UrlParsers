@@ -1,3 +1,5 @@
 package ru.tinkoff.edu.java.scrapper.dto;
 
-public record AddLinkRequest(String link) {}
+import java.net.URI;
+
+public record AddLinkRequest(URI link) {}

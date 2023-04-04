@@ -1,3 +1,5 @@
 package ru.tinkoff.edu.java.scrapper.service.dto;
 
-public record RemoveLinkDto(Long tgChatId, String link) {}
+import java.net.URI;
+
+public record RemoveLinkDto(Long tgChatId, URI link) {}

@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class BotClientConfiguration {
 
     @Bean
-    public WebClient botWebConfigClient(@Value("${bot.webclient.base.url:http://localhost:8080/}") String baseUrl) {
+    public WebClient botWebConfigClient(@Value("${bot.webclient.base.url:http://localhost:8080/scrapper}") String baseUrl) {
         return WebClient.builder()
                 .baseUrl(baseUrl)
                 .build();

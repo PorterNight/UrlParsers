@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.tinkoff.edu.java.bot.dto.LinkUpdateErrorResponse;
 
+import java.net.URISyntaxException;
+
 @RestControllerAdvice
 public class BotControllerExceptionHandler {
 

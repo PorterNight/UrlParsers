@@ -9,10 +9,6 @@ import ru.tinkoff.edu.java.scrapper.exceptions.IsValidURL;
 public class BotService {
 
     public String updateLink(UpdateLinkDto info) {
-
-        if (!IsValidURL.isValidURL(info.url()))
-            throw new BotControllerException("Некорректный URL: " + info.url(), 400);
-
-        return "Чат зарегистрирован";
+        return "ссылка обновлена";
     }
 }
