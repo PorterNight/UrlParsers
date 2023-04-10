@@ -2,6 +2,7 @@ package ru.tinkoff.edu.java.scrapper.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ru.tinkoff.edu.java.scrapper.dao.jdbc.JdbcLinkService;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 
@@ -10,12 +11,20 @@ import ru.tinkoff.edu.java.scrapper.service.dto.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.HashSet;
 
 @Service
 public class ScrapperService {
 
     private HashSet<String> urls = new HashSet<>();
+
+    private JdbcLinkService jdbcLinkService;
+
+    public ScrapperService(JdbcLinkService jdbcLinkService) {
+        this.jdbcLinkService = jdbcLinkService;
+    }
+
 
     @ResponseStatus
     public String registerChat(RegisterChatDto info) {
@@ -59,14 +68,15 @@ public class ScrapperService {
 
     }
 
-    public LinkResponse addLink(AddLinkDto info) {
+    public LinkResponse addLink(AddLinkDto info) throws SQLException {
 
         if (info.tgChatId() < 0)
             throw new ScrapperControllerException("Ccылка отсутствует", 400);
-//        if (!IsValidURL.isValidURL(info.link()))
-//            throw new ScrapperControllerException("Неверный URL: " + info.link(), 400);
 
         urls.add(info.link().toString());
+
+//        JdbcLinkService jdbcLinkService = new JdbcLinkService();
+        jdbcLinkService.add( info.tgChatId(), info.link());
 
         System.out.println("Scrapper urls:" + urls.toArray().toString());
 

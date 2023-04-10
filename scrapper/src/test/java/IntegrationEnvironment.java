@@ -25,7 +25,7 @@ public abstract class IntegrationEnvironment {
 
     static {
         POSTGRESQL_CONTAINER = new PostgreSQLContainer("postgres:14.7")
-                .withDatabaseName("integration-tests-db")
+                .withDatabaseName("db_test")
                 .withUsername("username")
                 .withPassword("password");
         POSTGRESQL_CONTAINER.start();

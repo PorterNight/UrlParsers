@@ -8,6 +8,7 @@ import ru.tinkoff.edu.java.scrapper.service.dto.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/scrapper")
@@ -48,7 +49,7 @@ public class ScrapperController {
     }
 
     @PostMapping(value = "/links", produces = "application/json")
-    public ResponseEntity<LinkResponse> addLink(@RequestHeader long tgChatId, @RequestBody AddLinkRequest request) {
+    public ResponseEntity<LinkResponse> addLink(@RequestHeader long tgChatId, @RequestBody AddLinkRequest request) throws SQLException {
 
         System.out.println("Scrapper chat start : " + tgChatId);
 

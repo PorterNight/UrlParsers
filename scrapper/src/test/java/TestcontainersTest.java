@@ -19,12 +19,17 @@ class TestcontainersTest extends IntegrationEnvironment {
                 POSTGRESQL_CONTAINER.getPassword());
              Statement statement = connection.createStatement()) {
 
-            // simple access to db
-            ResultSet resultSet = statement.executeQuery("SELECT 1");
-            resultSet.next();
-            int result = resultSet.getInt(1);
+            // write 3 rows
+            statement.execute("CREATE TABLE IF NOT EXISTS test (url TEXT)");
+            statement.executeUpdate("INSERT INTO test (url) VALUES ('https://github.com')");
+            statement.executeUpdate("INSERT INTO test (url) VALUES ('https://youtube.com')");
+            statement.executeUpdate("INSERT INTO test (url) VALUES ('https://habr.com')");
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(url) FROM test");
 
-            assertEquals(1, result);
+            resultSet.next();
+            int count = resultSet.getInt(1);
+
+            assertEquals(3, count);
         }
     }
 }

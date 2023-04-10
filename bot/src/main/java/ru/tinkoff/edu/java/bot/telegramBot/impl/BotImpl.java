@@ -8,12 +8,14 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.SendResponse;
 import ru.tinkoff.edu.java.bot.telegramBot.Bot;
 import ru.tinkoff.edu.java.bot.telegramBot.UserMessageProcessor;
 import ru.tinkoff.edu.java.bot.telegramBot.commands.BotCommand;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BotImpl implements Bot {
@@ -21,6 +23,7 @@ public class BotImpl implements Bot {
     private final UserMessageProcessor userProc;
 
     private final TelegramBot bot;
+
 
     public BotImpl(UserMessageProcessor userProc, TelegramBot bot) {
         this.userProc = userProc;
@@ -52,6 +55,7 @@ public class BotImpl implements Bot {
             }
         });
     }
+
 
     private Keyboard simpleKeyboard() {
 
