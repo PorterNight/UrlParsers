@@ -1,12 +1,13 @@
 # URL Parsers
 
-Stackoverflow and Github parsers for Tinkoff educaton task.
+TelegramBot, Stackoverflow and Github parsers for Tinkoff educaton task.
 
 
 
-## Run test
+## Run tests
 
-  link-parser/src/test/java/LinkParserTest.java
+  link-parsers/src/test/java/LinkParserTest.java
+  bot/src/test/java/ListCommandUnitTest.java
 
 ## Author
 
