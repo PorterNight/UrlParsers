@@ -1,12 +1,16 @@
 package ru.tinkoff.edu.java.scrapper.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.tinkoff.edu.java.scrapper.dao.jdbc.JdbcLinkService;
+import ru.tinkoff.edu.java.scrapper.jdbc.service.JdbcLinkService;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 
 import ru.tinkoff.edu.java.scrapper.exceptions.ScrapperControllerException;
+import ru.tinkoff.edu.java.scrapper.jdbc.service.JdbcTgChatService;
+import ru.tinkoff.edu.java.scrapper.scheduler.LinkUpdaterScheduler;
 import ru.tinkoff.edu.java.scrapper.service.dto.*;
 
 import java.net.URI;
@@ -19,30 +23,41 @@ public class ScrapperService {
 
     private HashSet<String> urls = new HashSet<>();
 
-    private JdbcLinkService jdbcLinkService;
+    private static final Logger log = LoggerFactory.getLogger(ScrapperService.class);
+//    private final JdbcLinkService jdbcLinkService;
+    private final JdbcTgChatService jdbcTgChatService;
 
-    public ScrapperService(JdbcLinkService jdbcLinkService) {
-        this.jdbcLinkService = jdbcLinkService;
+
+    public ScrapperService(JdbcTgChatService jdbcTgChatService) {
+//        this.jdbcLinkService = jdbcLinkService;
+        this.jdbcTgChatService = jdbcTgChatService;
     }
 
 
     @ResponseStatus
     public String registerChat(RegisterChatDto info) {
 
-        if (((Long) info.id()).equals(555L))
-            throw new ScrapperControllerException("Чат с id=" + info.id() + " уже зарегистрирован: ", 400);
+        log.info("Scrapper: registering chat");
+        jdbcTgChatService.register(info.id());
 
+
+//        if (((Long) info.id()).equals(555L))
+//            throw new ScrapperControllerException("Чат с id=" + info.id() + " уже зарегистрирован: ", 400);
+//
         return "Чат зарегистрирован";
     }
 
     @ResponseStatus
     public String deleteChat(DeleteChatDto info) {
 
-        if (((Long) info.id()).equals(555L))
-            throw new ScrapperControllerException("Невозможно удалить чат", 400);
+        jdbcTgChatService.unregister(info.id());
 
-        if (info.id() < 0)
-            throw new ScrapperControllerException("Чат не существует", 404);
+
+//        if (((Long) info.id()).equals(555L))
+//            throw new ScrapperControllerException("Невозможно удалить чат", 400);
+//
+//        if (info.id() < 0)
+//            throw new ScrapperControllerException("Чат не существует", 404);
 
         return "Чат успешно удален";
     }
@@ -76,7 +91,7 @@ public class ScrapperService {
         urls.add(info.link().toString());
 
 //        JdbcLinkService jdbcLinkService = new JdbcLinkService();
-        jdbcLinkService.add( info.tgChatId(), info.link());
+//        jdbcLinkService.add( info.tgChatId(), info.link());
 
         System.out.println("Scrapper urls:" + urls.toArray().toString());
 

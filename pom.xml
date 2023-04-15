@@ -157,6 +157,15 @@
             </plugins>
         </pluginManagement>
 
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${basedir}</directory>
+            </testResource>
+        </testResources>
+
     </build>
 
 </project>

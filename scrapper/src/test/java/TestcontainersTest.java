@@ -17,7 +17,7 @@ class TestcontainersTest extends IntegrationEnvironment {
                 POSTGRESQL_CONTAINER.getJdbcUrl(),
                 POSTGRESQL_CONTAINER.getUsername(),
                 POSTGRESQL_CONTAINER.getPassword());
-             Statement statement = connection.createStatement()) {
+            Statement statement = connection.createStatement()) {
 
             // write 3 rows
             statement.execute("CREATE TABLE IF NOT EXISTS test (url TEXT)");

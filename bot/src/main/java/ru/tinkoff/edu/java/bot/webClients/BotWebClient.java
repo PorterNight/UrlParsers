@@ -3,6 +3,7 @@ package ru.tinkoff.edu.java.bot.webClients;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -13,6 +14,7 @@ import ru.tinkoff.edu.java.scrapper.dto.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.dto.RemoveLinkRequest;
+import ru.tinkoff.edu.java.scrapper.exceptions.BadRequestException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,15 +29,33 @@ public class BotWebClient {
     }
 
     public Flux<String> sendRegisterChatByID(long tgChatId) {
-        System.out.println("BotWebClient : sending sendRegisterChatByID " + tgChatId);
 
         return botWebClient.post()
                 .uri("/tg-chat/{tgChatId}", tgChatId)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
+//                .onStatus(status -> status.is4xxClientError(),
+//                        response -> {
+//                            if (response.statusCode() == HttpStatus.BAD_REQUEST) {
+//                                return Mono.error(new BadRequestException("Bad Request"));
+//
+//                            } else {
+//                                return Mono.error(new BadRequestException("Client Error"));
+//                            }
+//                        })
                 .bodyToFlux(String.class);
     }
 
+//        public String sendRegisterChatByID(long tgChatId) {
+//
+//        return botWebClient.post()
+//                .uri("/tg-chat/{tgChatId}", tgChatId)
+//                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+//                .retrieve()
+//                .bodyToFlux(String.class)
+//                .subscribe(response -> System.out.println("Response: " + response),
+//                        error -> System.err.println("Error: " + error.getMessage())).toString();
+//    }
 
     public Flux<AddLinkRequest> sendTrackedLink(long tgChatId, String link) throws URISyntaxException {
 
@@ -70,7 +90,7 @@ public class BotWebClient {
     }
 
     public Flux<ListLinksResponse> getTrackedLink(long tgChatId) {
-        System.out.println("BotWebClient : sending sendRegisterChatByID " + tgChatId);
+
 
         return botWebClient.get()
                 .uri("/links")
@@ -79,7 +99,6 @@ public class BotWebClient {
                 .retrieve()
                 .bodyToFlux(ListLinksResponse.class);
     }
-
 
 
 }
