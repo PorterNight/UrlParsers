@@ -21,20 +21,20 @@ public class JdbcTgChatService implements TgChatService {
     @Override
     public void register(long tgChatId) {
 
-            // first check if tgChatId is already in table
-            JdbcTgChatRepository res = jdbcTgChatBaseService.findAll();
+        // first check if tgChatId is already in table
+        JdbcTgChatRepository res = jdbcTgChatBaseService.findAll();
 
-            if (res.getLength() > 0 && Arrays.stream(res.getTgChatId()).anyMatch(id -> id.equals(tgChatId))) {
+        if (res.getLength() > 0 && Arrays.stream(res.getTgChatId()).anyMatch(id -> id.equals(tgChatId))) {
 
-                System.out.println("JdbcTgChatService: chat already registered" );
-                throw new ScrapperControllerException("Чат с id=" + tgChatId + " уже зарегистрирован: ", 400);
+            System.out.println("JdbcTgChatService: chat already registered");
+            throw new ScrapperControllerException("Чат с id=" + tgChatId + " уже зарегистрирован: ", 400);
 
-            } else {  // else add chatID to table
+        } else {  // else add chatID to table
 
-                System.out.println("JdbcTgChatService: register new chat" );
-                jdbcTgChatBaseService.add(tgChatId);
+            System.out.println("JdbcTgChatService: register new chat");
+            jdbcTgChatBaseService.add(tgChatId);
 
-            }
+        }
     }
 
     @Transactional

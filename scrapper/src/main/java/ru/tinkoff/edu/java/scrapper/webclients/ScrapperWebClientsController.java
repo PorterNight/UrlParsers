@@ -31,7 +31,7 @@ public class ScrapperWebClientsController {
 
         StackOverflowInfoDto questions = stackOverflowClient.getFaqByTag(tag).blockLast();
         StackOverFlowFetchedData result = service.getStackOverflowInfo(questions);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/github/{owner}/{repo}")
@@ -39,7 +39,7 @@ public class ScrapperWebClientsController {
 
         GitHubClientResponseDto repoResponse = gitHubClient.getListRepoEvents(owner, repo).blockLast();
         GitHubFetchedData result = service.getGitHubInfo(repoResponse);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
     }
 
 }

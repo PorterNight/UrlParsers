@@ -2,10 +2,11 @@ package ru.tinkoff.edu.java.scrapper.jdbc.service;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcLinkRepository;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcTgChatRepository;
+import ru.tinkoff.edu.java.scrapper.jdbc.repository.*;
 
 import java.net.URI;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -18,33 +19,51 @@ public class JdbcLinkBaseService {
     }
 
     public void add(long tgChatId, URI url) {
-        jdbcTemplate.update("INSERT INTO link(url) VALUES (?)", url);
+        jdbcTemplate.update("INSERT INTO link(url) VALUES (?)", url.toString());
 
-        String sql = "SELECT id FROM link WHERE url = ?";
-        Long linkId = jdbcTemplate.queryForObject(sql, Long.class, url);
+        long link_id = jdbcTemplate.queryForObject("SELECT id FROM link WHERE url = ?", Long.class, url.toString());
 
-        jdbcTemplate.update("INSERT INTO link_chat(link_id, chat_id) VALUES (?, ?)", linkId, tgChatId);
+        jdbcTemplate.update("INSERT INTO link_chat(link_id, chat_id) VALUES (?, ?)", link_id, tgChatId);
+    }
+
+    public void addTime(URI url, OffsetDateTime time) {
+        Timestamp timestamp = Timestamp.from(time.toInstant());
+        jdbcTemplate.update("UPDATE link SET new_event_created_at = ? WHERE url = ?", timestamp, url.toString());
     }
 
     public void remove(long tgChatId, URI url) {
 
-        String sql = "SELECT id FROM link WHERE url = ?";
-        Long linkId = jdbcTemplate.queryForObject(sql, Long.class, url);
+        long link_id = jdbcTemplate.queryForObject("SELECT id FROM link WHERE url = ?", Long.class, url.toString());
 
-        jdbcTemplate.update("DELETE FROM link WHERE id = ?", linkId);
-        jdbcTemplate.update("DELETE FROM link_chat WHERE link_id = ?", linkId);
+        jdbcTemplate.update("DELETE FROM link WHERE id = ?", link_id);
+        jdbcTemplate.update("DELETE FROM link_chat WHERE link_id = ?", link_id);
     }
 
-    public JdbcLinkRepository findAll(long tgChatId) {
+    public JdbcListLinkRepository findAll(long tgChatId) {
 
         String sql = "SELECT url FROM link";
         List<URI> urls = jdbcTemplate.queryForList(sql, URI.class);
-        URI[] url = urls.stream().toArray(URI[]::new);
-        int length = url.length;
+        JdbcLinkRepository[] links = urls.stream()
+                .map(JdbcLinkRepository::new)
+                .toArray(JdbcLinkRepository[]::new);
 
-        System.out.println("jdbs findall: " + urls.get(0) + "length: " + length);
+        int length = links.length;
 
-        return new JdbcLinkRepository(url, length);    }
-
-
+        return new JdbcListLinkRepository(links, length);
     }
+
+
+    public JdbcListLinkWithTimeRepository findAllFilteredByTimeout(long timeout) {
+
+        OffsetDateTime time = OffsetDateTime.now().minusMinutes(timeout);
+        List<JdbcLinkWithTimeRepository> linksWithTime = jdbcTemplate.query(
+                "SELECT url, new_event_created_at FROM link WHERE updated_at < ?",
+                (resultSet, rowNum) -> new JdbcLinkWithTimeRepository(
+                        URI.create(resultSet.getString("url")),
+                        resultSet.getObject("new_event_created_at", OffsetDateTime.class)
+                ), time);
+
+        return new JdbcListLinkWithTimeRepository(linksWithTime.toArray(new JdbcLinkWithTimeRepository[0]), linksWithTime.size());
+    }
+}
+

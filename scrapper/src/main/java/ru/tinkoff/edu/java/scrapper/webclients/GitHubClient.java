@@ -30,7 +30,8 @@ public class GitHubClient {
                 .uri("/repos/{owner}/{repo}/events", owner, repo)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
-                .bodyToFlux(GitHubClientResponseDto.class);
+                .bodyToFlux(GitHubClientResponseDto.class)
+                .take(1);
     }
 }
 

@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import ru.tinkoff.edu.java.bot.webClients.BotWebClient;
+import ru.tinkoff.edu.java.scrapper.dto.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
+import ru.tinkoff.edu.java.scrapper.dto.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.service.ScrapperService;
 
 import java.net.URISyntaxException;
@@ -27,14 +29,12 @@ public class TgBotService {
     }
 
 
-    public void sendLinkToScrapperToTrack(long tgChatId, String url) throws URISyntaxException {
-        client.sendTrackedLink(tgChatId, url).blockLast();
-
-
+    public Flux<AddLinkRequest> sendLinkToScrapperToTrack(long tgChatId, String url) throws URISyntaxException {
+        return client.sendTrackedLink(tgChatId, url);
     }
 
-    public void sendLinkToScrapperToUntrack(long tgChatId, String url) throws URISyntaxException {
-        client.sendUnTrackedLink(tgChatId, url).blockLast();
+    public  Flux<RemoveLinkRequest> sendLinkToScrapperToUntrack(long tgChatId, String url) throws URISyntaxException {
+        return client.sendUnTrackedLink(tgChatId, url);
     }
 
     public ListLinksResponse sendReqToScrapperToGetListOfLinks(long tgChatId) {

@@ -34,28 +34,9 @@ public class BotWebClient {
                 .uri("/tg-chat/{tgChatId}", tgChatId)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
-//                .onStatus(status -> status.is4xxClientError(),
-//                        response -> {
-//                            if (response.statusCode() == HttpStatus.BAD_REQUEST) {
-//                                return Mono.error(new BadRequestException("Bad Request"));
-//
-//                            } else {
-//                                return Mono.error(new BadRequestException("Client Error"));
-//                            }
-//                        })
                 .bodyToFlux(String.class);
     }
 
-//        public String sendRegisterChatByID(long tgChatId) {
-//
-//        return botWebClient.post()
-//                .uri("/tg-chat/{tgChatId}", tgChatId)
-//                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-//                .retrieve()
-//                .bodyToFlux(String.class)
-//                .subscribe(response -> System.out.println("Response: " + response),
-//                        error -> System.err.println("Error: " + error.getMessage())).toString();
-//    }
 
     public Flux<AddLinkRequest> sendTrackedLink(long tgChatId, String link) throws URISyntaxException {
 

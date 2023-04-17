@@ -9,6 +9,7 @@ import ru.tinkoff.edu.java.scrapper.exceptions.IsValidURL;
 public class BotService {
 
     public String updateLink(UpdateLinkDto info) {
+        System.out.println("Bot updates received: " + info.url() + " : " + info.description() + " : " + info.tgChatIds());
         return "ссылка обновлена";
     }
 }

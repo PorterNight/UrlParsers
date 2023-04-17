@@ -17,21 +17,20 @@ public class JdbcTgChatBaseService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void add(long tgChatId){
+    public void add(long tgChatId) {
         jdbcTemplate.update("INSERT INTO chat(chat_id) VALUES (?)", tgChatId);
     }
 
-    public void remove(long tgChatId){
+    public void remove(long tgChatId) {
         jdbcTemplate.update("DELETE FROM chat WHERE chat_id=?", tgChatId);
     }
 
-    public JdbcTgChatRepository findAll(){
+    public JdbcTgChatRepository findAll() {
         String sql = "SELECT chat_id FROM chat";
         List<Long> chatIds = jdbcTemplate.queryForList(sql, Long.class);
         Long[] chatId = chatIds.stream().toArray(Long[]::new);
         int length = chatId.length;
 
-        //System.out.println("jdbs findall: " + chatIds.get(0) + "length: " + length);
-
-        return new JdbcTgChatRepository(chatId, length);    }
+        return new JdbcTgChatRepository(chatId, length);
+    }
 }

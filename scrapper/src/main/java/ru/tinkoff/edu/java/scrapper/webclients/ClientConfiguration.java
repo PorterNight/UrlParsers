@@ -22,4 +22,11 @@ public class ClientConfiguration {
                 .build();
     }
 
+    @Bean
+    public WebClient scrapperToBotWebClient(@Value("${scrapper_to_bot.webclient.base.url:http://localhost:8090/bot}") String baseUrl) {
+        return WebClient.builder()
+                .baseUrl(baseUrl)
+                .build();
+    }
+
 }

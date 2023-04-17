@@ -127,6 +127,16 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>jdbc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ru.tinkoff.edu</groupId>
+            <artifactId>LinkParser</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
     </dependencies>
 

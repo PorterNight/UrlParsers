@@ -4,7 +4,8 @@
 CREATE TABLE link (
     id SERIAL PRIMARY KEY,
     url TEXT NOT NULL,
-    updated_at TIMESTAMP DEFAULT NOW()
+    updated_at TIMESTAMP DEFAULT NOW(),
+    new_event_created_at TIMESTAMP
 );
 
 --changeset renat_gainutdinov:002_create_tables-1.0

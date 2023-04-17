@@ -5,13 +5,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exceptions.ScrapperControllerException;
-import ru.tinkoff.edu.java.scrapper.jdbc.LinkDao;
 import ru.tinkoff.edu.java.scrapper.jdbc.LinkService;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcLinkChatRepository;
+import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcListLinkRepository;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
+
 
 @Service
 public class JdbcLinkService implements LinkService {
@@ -27,13 +27,12 @@ public class JdbcLinkService implements LinkService {
 
     @Transactional
     @Override
-    public LinkDao add(long tgChatId, URI url) {
+    public JdbcLinkChatRepository add(long tgChatId, URI url) {
 
         // first check if url is already in table
-        JdbcLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
+        JdbcListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
 
-        if (res.getLength() > 0 && Arrays.stream(res.getUrls()).anyMatch(id -> id.equals(tgChatId))) {
-
+        if (res.size() > 0 && Arrays.stream(res.links()).anyMatch(link -> link.url().equals(url))) {
             System.out.println("JdbcLinkService: url already registered " + url.toString());
             throw new ScrapperControllerException("Ссылка уже присутствует: " + url, 400);
 
@@ -43,30 +42,31 @@ public class JdbcLinkService implements LinkService {
             jdbcLinkBaseService.add(tgChatId, url);
 
         }
-        return new LinkDao(tgChatId, url);
+        return new JdbcLinkChatRepository(tgChatId, url);
     }
 
+    @Transactional
     @Override
-    public LinkDao remove(long tgChatId, URI url) {
+    public JdbcLinkChatRepository remove(long tgChatId, URI url) {
 
-        JdbcLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
+        JdbcListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
 
-        if (res.getLength() > 0 && Arrays.stream(res.getUrls()).anyMatch(id -> id.equals(tgChatId))) {
-
-            System.out.println("JdbcLinkService: url is absent " + url.toString());
-            throw new ScrapperControllerException("Url отсутсвует для удаления: " + url, 400);
-
-        } else {
+        if (res.size() > 0 && Arrays.stream(res.links()).anyMatch(link -> link.url().equals(url))) {
 
             System.out.println("JdbcLinkService: removing url" + url.toString());
             jdbcLinkBaseService.remove(tgChatId, url);
 
+        } else {
+
+            System.out.println("JdbcLinkService: url is absent " + url);
+            throw new ScrapperControllerException("Url отсутсвует для удаления: " + url, 400);
+
         }
-        return new LinkDao(tgChatId, url);
+        return new JdbcLinkChatRepository(tgChatId, url);
     }
 
     @Override
-    public JdbcLinkRepository listAll(long tgChatId) {
+    public JdbcListLinkRepository listAll(long tgChatId) {
         return jdbcLinkBaseService.findAll(tgChatId);
     }
 }

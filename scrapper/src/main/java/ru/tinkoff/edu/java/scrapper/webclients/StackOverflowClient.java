@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import ru.tinkoff.edu.java.scrapper.service.dto.StackOverflowInfoDto;
+import ru.tinkoff.edu.java.scrapper.service.dto.StackOverflowListAnswersDto;
 
 @Component
 public class StackOverflowClient {
@@ -26,6 +27,19 @@ public class StackOverflowClient {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .retrieve()
                 .bodyToFlux(StackOverflowInfoDto.class);
+    }
+
+
+    public Flux<StackOverflowListAnswersDto> getAnswersByID(int id) {
+
+        return stackOverflowClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/questions/{id}/answers")
+                        .queryParam("site", "stackoverflow")
+                        .build(id))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .bodyToFlux(StackOverflowListAnswersDto.class)
+                .take(1);
     }
 }
 
