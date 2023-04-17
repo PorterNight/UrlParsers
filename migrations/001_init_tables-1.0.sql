@@ -4,14 +4,14 @@
 CREATE TABLE link (
     id SERIAL PRIMARY KEY,
     url TEXT NOT NULL,
-    updated_at TIMESTAMP DEFAULT NOW(),
-    new_event_created_at TIMESTAMP
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    new_event_created_at TIMESTAMPTZ
 );
 
 --changeset renat_gainutdinov:002_create_tables-1.0
 CREATE TABLE chat (
     chat_id SERIAL PRIMARY KEY,
-	updated_at TIMESTAMP DEFAULT NOW()
+	updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 --changeset renat_gainutdinov:003_create_tables-1.0

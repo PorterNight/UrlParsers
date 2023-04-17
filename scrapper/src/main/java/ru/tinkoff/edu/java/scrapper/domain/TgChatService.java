@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.jdbc;
+package ru.tinkoff.edu.java.scrapper.domain;
 
 public interface TgChatService {
     void register(long tgChatId);

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.tinkoff.edu.java.scrapper.jdbc.service.JdbcTgChatBaseService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcTgChatBaseService;
 
 @Testcontainers
 @SpringBootTest(classes = IntegrationEnvironment.IntegrationEnvironmentConfig.class)

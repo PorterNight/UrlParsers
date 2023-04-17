@@ -1,13 +1,13 @@
-package ru.tinkoff.edu.java.scrapper.jdbc.service;
+package ru.tinkoff.edu.java.scrapper.domain.jdbc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.scrapper.domain.LinkService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkChatRepository;
 import ru.tinkoff.edu.java.scrapper.exceptions.ScrapperControllerException;
-import ru.tinkoff.edu.java.scrapper.jdbc.LinkService;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcLinkChatRepository;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
 
 import java.net.URI;
 import java.util.Arrays;

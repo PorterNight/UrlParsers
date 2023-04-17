@@ -4,17 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcListLinkRepository;
-import ru.tinkoff.edu.java.scrapper.jdbc.service.JdbcLinkService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcLinkService;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 
-import ru.tinkoff.edu.java.scrapper.exceptions.ScrapperControllerException;
-import ru.tinkoff.edu.java.scrapper.jdbc.service.JdbcTgChatService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcTgChatService;
 import ru.tinkoff.edu.java.scrapper.service.dto.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;

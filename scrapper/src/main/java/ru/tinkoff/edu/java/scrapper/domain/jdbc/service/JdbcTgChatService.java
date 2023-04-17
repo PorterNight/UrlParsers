@@ -1,10 +1,10 @@
-package ru.tinkoff.edu.java.scrapper.jdbc.service;
+package ru.tinkoff.edu.java.scrapper.domain.jdbc.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.scrapper.domain.TgChatService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.exceptions.ScrapperControllerException;
-import ru.tinkoff.edu.java.scrapper.jdbc.TgChatService;
-import ru.tinkoff.edu.java.scrapper.jdbc.repository.JdbcTgChatRepository;
 
 import java.util.Arrays;
 

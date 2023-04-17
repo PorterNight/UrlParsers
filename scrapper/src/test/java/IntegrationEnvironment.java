@@ -92,9 +92,8 @@ public abstract class IntegrationEnvironment {
         }
     }
 
-
     @Configuration
-    @ComponentScan("ru.tinkoff.edu.java.scrapper.jdbc.service")
+    @ComponentScan("ru.tinkoff.edu.java.scrapper.domain.jdbc.service")
     static class IntegrationEnvironmentConfig {
 
         @Bean
