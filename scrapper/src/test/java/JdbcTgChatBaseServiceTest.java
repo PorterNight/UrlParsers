@@ -1,10 +1,20 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcTgChatBaseService;
+
+import java.net.URI;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @SpringBootTest(classes = IntegrationEnvironment.IntegrationEnvironmentConfig.class)
@@ -13,28 +23,72 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
 
 
     @Autowired
-    private final JdbcTgChatBaseService jdbcTgChatBaseService;
-
+    private final TgChatBaseService jdbcTgChatBaseService;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JdbcTgChatBaseServiceTest(JdbcTgChatBaseService jdbcTgChatBaseService) {
+    public JdbcTgChatBaseServiceTest(TgChatBaseService jdbcTgChatBaseService, JdbcTemplate jdbcTemplate) {
         this.jdbcTgChatBaseService = jdbcTgChatBaseService;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
+    @BeforeEach
+    void setUp() {
+        // erase all data from db
+        jdbcTemplate.update("DELETE FROM chat");
+        jdbcTemplate.update("DELETE FROM link_chat");
+    }
 
     @Test
     void addTest() {
-        jdbcTgChatBaseService.add(2345235);
+        // Add a new chat
+
+        long testChatId = 2345235;
+        jdbcTgChatBaseService.add(testChatId);
+
+        String sql = "SELECT chat_id FROM chat WHERE chat_id = ?";
+        Long chatId = jdbcTemplate.queryForObject(sql, Long.class, testChatId);
+
+        assertEquals(testChatId, chatId);
     }
 
     @Test
     void removeTest() {
-        jdbcTgChatBaseService.remove(23452353);
+
+        // add a chat to be removed
+        long testChatId = 2233;
+        jdbcTgChatBaseService.add(testChatId);
+
+        // remove the chat
+        jdbcTgChatBaseService.remove(testChatId);
+
+        String sql = "SELECT chat_id FROM chat WHERE chat_id = ?";
+        Exception e = assertThrows(EmptyResultDataAccessException.class, () -> {
+            jdbcTemplate.queryForObject(sql, Long.class, testChatId);
+        });
+
+        String expectedMessage = "Incorrect result size: expected 1, actual 0";
+        String actualMessage = e.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void findAllTest() {
-        jdbcTgChatBaseService.findAll();
+        // add chat records
+        long[] testChatIds = {1001, 1002, 1003};
+        for (long chatId : testChatIds) {
+            jdbcTgChatBaseService.add(chatId);
+        }
+
+        // get all chats
+        JdbcTgChatRepository allChats = jdbcTgChatBaseService.findAll();
+
+        assertEquals(testChatIds.length, allChats.getLength());
+
+        for (int i = 0; i < testChatIds.length; i++) {
+            assertEquals(testChatIds[i], allChats.getTgChatId()[i]);
+        }
     }
 
 }

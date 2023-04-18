@@ -18,6 +18,12 @@ public class TelegramConfig {
     public TelegramConfig(@Value("${TGTOKEN}") String token) {
         this.token = token;
     }
+
+    @Bean
+    public TelegramBot telegramBot() {
+        return new TelegramBot(token);
+    }
+
     @Bean
     public Bot getBot(UserMessageProcessor processor){ //, BotConfig config) {
         TelegramBot telegramBot = new TelegramBot(token);

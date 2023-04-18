@@ -41,16 +41,12 @@ public class JdbcTgChatService implements TgChatService {
     @Override
     public void unregister(long tgChatId) {
 
-        try {
-            // first check if tgChatId is already in table
-            JdbcTgChatRepository res = jdbcTgChatBaseService.findAll();
-            if (res.getLength() == 0 || !Arrays.asList(res.getTgChatId()).contains(tgChatId)) {
-                throw new ScrapperControllerException("Чат не существует", 404);
-            } else {  // else remove chatID from table
-                jdbcTgChatBaseService.remove(tgChatId);
-            }
-        } catch (ScrapperControllerException e) {
-            throw new ScrapperControllerException("Ошибка регистрации чата", 400);
+        // first check if tgChatId is already in table
+        JdbcTgChatRepository res = jdbcTgChatBaseService.findAll();
+        if (res.getLength() == 0 || !Arrays.asList(res.getTgChatId()).contains(tgChatId)) {
+            throw new ScrapperControllerException("Чат не существует", 404);
+        } else {  // else remove chatID from table
+            jdbcTgChatBaseService.remove(tgChatId);
         }
     }
 }

@@ -17,13 +17,14 @@ public class JdbcTgChatBaseService implements TgChatBaseService {
     }
 
     @Override
-    public void add(long tgChatId) {
+    public void add(long tgChatId) {   //register new chat
         jdbcTemplate.update("INSERT INTO chat(chat_id) VALUES (?)", tgChatId);
     }
 
     @Override
     public void remove(long tgChatId) {
         jdbcTemplate.update("DELETE FROM chat WHERE chat_id=?", tgChatId);
+        jdbcTemplate.update("DELETE FROM link_chat WHERE chat_id=?", tgChatId);
     }
 
     @Override

@@ -8,16 +8,16 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SetMyCommands;
 import com.pengrad.telegrambot.response.SendResponse;
+import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.telegramBot.Bot;
 import ru.tinkoff.edu.java.bot.telegramBot.UserMessageProcessor;
 import ru.tinkoff.edu.java.bot.telegramBot.commands.BotCommand;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class BotImpl implements Bot {
 
     private final UserMessageProcessor userProc;
@@ -56,6 +56,10 @@ public class BotImpl implements Bot {
         });
     }
 
+    public void sendUpdateLinkInfo(long chatId, String info) {
+        SendMessage sendMessage = new SendMessage(chatId, info).replyMarkup(simpleKeyboard());
+        bot.execute(sendMessage);
+    }
 
     private Keyboard simpleKeyboard() {
 

@@ -1,15 +1,26 @@
 package ru.tinkoff.edu.java.bot.service;
 
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.bot.exceptions.BotControllerException;
 import ru.tinkoff.edu.java.bot.service.dto.UpdateLinkDto;
-import ru.tinkoff.edu.java.scrapper.exceptions.IsValidURL;
+import ru.tinkoff.edu.java.bot.telegramBot.impl.BotImpl;
 
 @Service
 public class BotService {
 
+
+    private BotImpl botImpl;
+
+    public BotService(BotImpl botImpl) {
+        this.botImpl = botImpl;
+    }
+
+
     public String updateLink(UpdateLinkDto info) {
-        System.out.println("Bot updates received: " + info.url() + " : " + info.description() + " : " + info.tgChatIds());
-        return "ссылка обновлена";
+
+        for (long chat_id :
+                info.tgChatIds()) {
+            botImpl.sendUpdateLinkInfo(chat_id, "Новое обновление для " + info.description()  + " для ссылки: " +  info.url());
+        }
+        return "Ссылки отправлены";
     }
 }

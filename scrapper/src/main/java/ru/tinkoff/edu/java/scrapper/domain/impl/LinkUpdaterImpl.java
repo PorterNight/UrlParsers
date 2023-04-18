@@ -32,14 +32,14 @@ import static ru.tinkoff.edu.java.scrapper.service.UnixToOffsetDateTime.getUnixt
 public class LinkUpdaterImpl implements LinkUpdater {
 
     private static final Logger log = LoggerFactory.getLogger(LinkUpdaterScheduler.class);
-    private final LinkBaseService jdbcLinkBaseService;
+    private final LinkBaseService linkBaseService;
     private final GitHubClient gitHubClient;
     private final StackOverflowClient stackOverflowClient;
     private final ScrapperToBotClient scrapperToBotClient;
 
     @Autowired
-    public LinkUpdaterImpl(LinkBaseService jdbcLinkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperToBotClient scrapperToBotClient) {
-        this.jdbcLinkBaseService = jdbcLinkBaseService;
+    public LinkUpdaterImpl(LinkBaseService linkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperToBotClient scrapperToBotClient) {
+        this.linkBaseService = linkBaseService;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
         this.scrapperToBotClient = scrapperToBotClient;
@@ -48,98 +48,75 @@ public class LinkUpdaterImpl implements LinkUpdater {
     @Override
     public int updateLinks() {
 
-        JdbcListLinkWithTimeRepository res = jdbcLinkBaseService.findAllFilteredByTimeout(1);  // get only links were added more than N minites ago
+        JdbcListLinkWithTimeRepository res = linkBaseService.findAllFilteredByTimeout(1);  // get only links were added more than N minites ago
 
         Arrays.stream(res.linksWithTime()).forEach(link -> log.info(link.url().toString() + " : " + link.newEventCreatedAt()));
 
         if (res.size() > 0) {  // there are unupdated links
 
-            for (JdbcLinkWithTimeRepository i : res.linksWithTime()) {
-
-                URI link = i.url();
+            for (JdbcLinkWithTimeRepository db_data : res.linksWithTime()) {
 
                 UrlParser parser = new GithubUrlParser(new StackOverflowUrlParser(null));
-                ParsedUrl parsedLink = parser.parseLink(link.toString());
+                ParsedUrl parsedLink = parser.parseLink(db_data.url().toString());
 
-                updateGitHubLink(link, parsedLink, i.newEventCreatedAt());
-                updateStackOverflowLink(link, parsedLink, i.newEventCreatedAt());
+                updateGitHubLink(parsedLink, db_data);
+                updateStackOverflowLink(parsedLink, db_data);
 
             }
         }
         return 0;
     }
 
-    private void updateGitHubLink(URI url, ParsedUrl parsedLink, OffsetDateTime updateTimeFromDB) {
+
+
+    private void updateLink(JdbcLinkWithTimeRepository db_data, String descriptionPrefix, OffsetDateTime updateTimeFromInternet) {
+
+        OffsetDateTime updateTimeFromDB = db_data.newEventCreatedAt();
+        URI url = db_data.url();
+
+        if (updateTimeFromDB == null) { // if no newEventCreatedAt time in table link
+            linkBaseService.addTime(url, updateTimeFromInternet);
+        } else {
+            if (updateTimeFromInternet.isBefore(updateTimeFromDB) || updateTimeFromInternet.isEqual(updateTimeFromDB)) { // there is a new update
+                linkBaseService.addTime(url, updateTimeFromInternet);
+
+                String description = descriptionPrefix;
+                log.info(description);
+
+                LinkUpdateNotifyRequestDto data = new LinkUpdateNotifyRequestDto(db_data.url_id(), url, description, db_data.tgChatIds());
+                scrapperToBotClient.sendTrackedLinkNotify(data).blockLast();
+            }
+        }
+    }
+
+    private void updateGitHubLink(ParsedUrl parsedLink, JdbcLinkWithTimeRepository db_data) {
 
         if (parsedLink instanceof GithubParsedUrl) {
-
             String owner = ((GithubParsedUrl) parsedLink).username();
             String repo = ((GithubParsedUrl) parsedLink).repoName();
-
             GitHubClientResponseDto repoResponse = gitHubClient.getListRepoEvents(owner, repo).blockLast();
-
-            OffsetDateTime updateTimeFromInternet = OffsetDateTime.parse(repoResponse.created_at());  // updated time from github
-
-            log.info("updateGitHubLink:  updateTimeFromDB:" + updateTimeFromDB + "<>" + "updateTimeFromInternet:" + updateTimeFromInternet);
-
-            if (updateTimeFromDB == null) {  // if no newEventCreatedAt time in table link
-                jdbcLinkBaseService.addTime(url, updateTimeFromInternet);
-            } else {
-
-                if (updateTimeFromInternet.isAfter(updateTimeFromDB)) {  // there is a new update
-
-                    jdbcLinkBaseService.addTime(url, updateTimeFromInternet);
-
-                    String description = "";
-                    if (repoResponse.payload().action().equals("started")) {        // repo achived a new star from some user
-                        description += "Github: new star achived ";
-                    }
-                    if (repoResponse.payload().action().equals("created")) {        // a new commit comment event
-                        description += "Github: new commit comment eventd";
-                    }
-
-                    if (!description.isEmpty()) {
-                        log.info(description);
-
-                        LinkUpdateNotifyRequestDto data = new LinkUpdateNotifyRequestDto(0, url, description, null);
-                        scrapperToBotClient.sendTrackedLinkNotify(data).blockLast();
-                    }
-                }
-
-                log.info("github updateTimeFromDB time : " + updateTimeFromDB);
+            OffsetDateTime updateTimeFromInternet = OffsetDateTime.parse(repoResponse.created_at()); // updated time from github
+            String descriptionPrefix = "";
+            if (repoResponse.payload().action().equals("started")) { // repo achieved a new star from some user
+                descriptionPrefix += "Github: репозиторий получил новую звезду";
+            }
+            if (repoResponse.payload().action().equals("created")) { // a new commit comment event
+                descriptionPrefix += "Github: новый комментарий к commit";
+            }
+            if (!descriptionPrefix.isEmpty()) {
+                updateLink(db_data, descriptionPrefix, updateTimeFromInternet);
             }
         }
     }
 
-    private void updateStackOverflowLink(URI url, ParsedUrl parsedLink, OffsetDateTime updateTimeFromDB) {
+    private void updateStackOverflowLink(ParsedUrl parsedLink, JdbcLinkWithTimeRepository db_data) {
 
         if (parsedLink instanceof StackOverflowParsedUrl) {
-
             int id = ((StackOverflowParsedUrl) parsedLink).id();
-
             StackOverflowListAnswersDto repoResponse = stackOverflowClient.getAnswersByID(id).blockLast();
-
-            OffsetDateTime updateTimeFromInternet = getUnixtoOffsetDateTime(repoResponse.items().get(0).last_edit_date());  // updated time from stackOverflow
-
-            if (updateTimeFromDB == null) {  // if no newEventCreatedAt time in table link
-                jdbcLinkBaseService.addTime(url, updateTimeFromInternet);
-            } else {
-
-                String description = "";
-                if (updateTimeFromInternet.isAfter(updateTimeFromDB)) {  // there is a new update
-
-                    jdbcLinkBaseService.addTime(url, updateTimeFromInternet);
-
-                    description = "StackOverflow: new answer for a question";
-                    log.info(description);
-
-                    LinkUpdateNotifyRequestDto data = new LinkUpdateNotifyRequestDto(0, url, description, null);
-                    scrapperToBotClient.sendTrackedLinkNotify(data).blockLast();
-
-                }
-            }
+            OffsetDateTime updateTimeFromInternet = getUnixtoOffsetDateTime(repoResponse.items().get(0).last_edit_date()); // updated time from stackOverflow
+            String descriptionPrefix = "StackOverflow: новый ответ на вопрос";
+            updateLink(db_data, descriptionPrefix, updateTimeFromInternet);
         }
     }
-
-
 }

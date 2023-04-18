@@ -12,7 +12,6 @@ import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepositor
 import java.net.URI;
 import java.util.Arrays;
 
-
 @Service
 public class JdbcLinkService implements LinkService {
 
@@ -29,11 +28,11 @@ public class JdbcLinkService implements LinkService {
     @Override
     public JdbcLinkChatRepository add(long tgChatId, URI url) {
 
-        // first check if url is already in table
         JdbcListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
 
+        // check if url is already in table
         if (res.size() > 0 && Arrays.stream(res.links()).anyMatch(link -> link.url().equals(url))) {
-            System.out.println("JdbcLinkService: url already registered " + url.toString());
+            System.out.println("JdbcLinkService: url already registered " + url);
             throw new ScrapperControllerException("Ссылка уже присутствует: " + url, 400);
 
         } else {  // else add url with chatID to table
@@ -51,6 +50,7 @@ public class JdbcLinkService implements LinkService {
 
         JdbcListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
 
+        // check if url is already in table
         if (res.size() > 0 && Arrays.stream(res.links()).anyMatch(link -> link.url().equals(url))) {
 
             System.out.println("JdbcLinkService: removing url" + url.toString());
