@@ -76,7 +76,9 @@ public class JdbcLinkBaseService implements LinkBaseService {
 
     @Override
     public JdbcListLinkWithTimeRepository findAllFilteredByTimeout(long timeout) {
+
         OffsetDateTime time = OffsetDateTime.now().minusMinutes(timeout);
+
         List<JdbcLinkWithTimeRepository> linksWithTime = jdbcTemplate.query(
                 "SELECT id, url, new_event_created_at FROM link WHERE updated_at < ?",
                 (resultSet, rowNum) -> {

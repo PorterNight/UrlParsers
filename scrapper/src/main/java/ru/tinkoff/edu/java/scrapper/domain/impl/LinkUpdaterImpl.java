@@ -48,7 +48,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
     @Override
     public int updateLinks() {
 
-        JdbcListLinkWithTimeRepository res = linkBaseService.findAllFilteredByTimeout(1);  // get only links were added more than N minites ago
+        JdbcListLinkWithTimeRepository res = linkBaseService.findAllFilteredByTimeout(1);  // get only links were added more than N minites ago;
 
         Arrays.stream(res.linksWithTime()).forEach(link -> log.info(link.url().toString() + " : " + link.newEventCreatedAt()));
 
@@ -84,7 +84,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
                 log.info(description);
 
                 LinkUpdateNotifyRequestDto data = new LinkUpdateNotifyRequestDto(db_data.url_id(), url, description, db_data.tgChatIds());
-                scrapperToBotClient.sendTrackedLinkNotify(data).blockLast();
+                scrapperToBotClient.sendTrackedLinkNotify(data).blockLast();   // send updates to bot
             }
         }
     }
@@ -92,10 +92,13 @@ public class LinkUpdaterImpl implements LinkUpdater {
     private void updateGitHubLink(ParsedUrl parsedLink, JdbcLinkWithTimeRepository db_data) {
 
         if (parsedLink instanceof GithubParsedUrl) {
+
             String owner = ((GithubParsedUrl) parsedLink).username();
             String repo = ((GithubParsedUrl) parsedLink).repoName();
+
             GitHubClientResponseDto repoResponse = gitHubClient.getListRepoEvents(owner, repo).blockLast();
             OffsetDateTime updateTimeFromInternet = OffsetDateTime.parse(repoResponse.created_at()); // updated time from github
+
             String descriptionPrefix = "";
             if (repoResponse.payload().action().equals("started")) { // repo achieved a new star from some user
                 descriptionPrefix += "Github: репозиторий получил новую звезду";
@@ -113,8 +116,10 @@ public class LinkUpdaterImpl implements LinkUpdater {
 
         if (parsedLink instanceof StackOverflowParsedUrl) {
             int id = ((StackOverflowParsedUrl) parsedLink).id();
+
             StackOverflowListAnswersDto repoResponse = stackOverflowClient.getAnswersByID(id).blockLast();
             OffsetDateTime updateTimeFromInternet = getUnixtoOffsetDateTime(repoResponse.items().get(0).last_edit_date()); // updated time from stackOverflow
+
             String descriptionPrefix = "StackOverflow: новый ответ на вопрос";
             updateLink(db_data, descriptionPrefix, updateTimeFromInternet);
         }

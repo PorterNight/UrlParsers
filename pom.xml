@@ -17,6 +17,7 @@
         <module>bot</module>
         <module>scrapper</module>
         <module>link-parser</module>
+		<module>scrapper-jooq</module>
     </modules>
 
 
@@ -156,15 +157,6 @@
 
             </plugins>
         </pluginManagement>
-
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>${basedir}</directory>
-            </testResource>
-        </testResources>
 
     </build>
 
