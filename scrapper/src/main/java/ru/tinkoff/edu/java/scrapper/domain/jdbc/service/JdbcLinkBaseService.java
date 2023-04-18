@@ -5,10 +5,10 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkWithTimeRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkWithTimeRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkWithTimeRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkWithTimeRepository;
 
 import java.net.URI;
 import java.sql.Timestamp;
@@ -16,11 +16,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
-public class JdbcLinkBaseService implements LinkBaseService {
+public class JdbcLinkBaseService2 implements LinkBaseService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcLinkBaseService(JdbcTemplate jdbcTemplate) {
+    public JdbcLinkBaseService2(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -51,7 +51,7 @@ public class JdbcLinkBaseService implements LinkBaseService {
     }
 
     @Override
-    public JdbcListLinkRepository findAll(long tgChatId) {
+    public ListLinkRepository findAll(long tgChatId) {
 
         String sql = "SELECT l.url FROM link l " +
                 "JOIN link_chat lc ON l.id = lc.link_id " +
@@ -64,32 +64,32 @@ public class JdbcLinkBaseService implements LinkBaseService {
         };
 
         List<URI> urls = jdbcTemplate.query(sql, preparedStatementSetter, rowMapper);
-        JdbcLinkRepository[] links = urls.stream()
-                .map(JdbcLinkRepository::new)
-                .toArray(JdbcLinkRepository[]::new);
+        LinkRepository[] links = urls.stream()
+                .map(LinkRepository::new)
+                .toArray(LinkRepository[]::new);
 
         int length = links.length;
 
-        return new JdbcListLinkRepository(links, length);
+        return new ListLinkRepository(links, length);
     }
 
 
     @Override
-    public JdbcListLinkWithTimeRepository findAllFilteredByTimeout(long timeout) {
+    public ListLinkWithTimeRepository findAllFilteredByTimeout(long timeout) {
 
         OffsetDateTime time = OffsetDateTime.now().minusMinutes(timeout);
 
-        List<JdbcLinkWithTimeRepository> linksWithTime = jdbcTemplate.query(
+        List<LinkWithTimeRepository> linksWithTime = jdbcTemplate.query(
                 "SELECT id, url, new_event_created_at FROM link WHERE updated_at < ?",
                 (resultSet, rowNum) -> {
                     long linkId = resultSet.getLong("id");
                     URI url = URI.create(resultSet.getString("url"));
                     OffsetDateTime newEventCreatedAt = resultSet.getObject("new_event_created_at", OffsetDateTime.class);
                     List<Long> tgChatIds = findChatIdsByLinkId(linkId);
-                    return new JdbcLinkWithTimeRepository(linkId, url, newEventCreatedAt, tgChatIds);
+                    return new LinkWithTimeRepository(linkId, url, newEventCreatedAt, tgChatIds);
                 }, time);
 
-        return new JdbcListLinkWithTimeRepository(linksWithTime.toArray(new JdbcLinkWithTimeRepository[0]), linksWithTime.size());
+        return new ListLinkWithTimeRepository(linksWithTime.toArray(new LinkWithTimeRepository[0]), linksWithTime.size());
     }
 
     private List<Long> findChatIdsByLinkId(long linkId) {
