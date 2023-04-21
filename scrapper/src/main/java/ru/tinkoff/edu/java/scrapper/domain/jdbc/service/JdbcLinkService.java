@@ -5,9 +5,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.domain.LinkService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkChatRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkChatRepository;
 import ru.tinkoff.edu.java.scrapper.exceptions.ScrapperControllerException;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -26,9 +26,9 @@ public class JdbcLinkService implements LinkService {
 
     @Transactional
     @Override
-    public JdbcLinkChatRepository add(long tgChatId, URI url) {
+    public LinkChatRepository add(long tgChatId, URI url) {
 
-        JdbcListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
+        ListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
 
         // check if url is already in table
         if (res.size() > 0 && Arrays.stream(res.links()).anyMatch(link -> link.url().equals(url))) {
@@ -41,14 +41,14 @@ public class JdbcLinkService implements LinkService {
             jdbcLinkBaseService.add(tgChatId, url);
 
         }
-        return new JdbcLinkChatRepository(tgChatId, url);
+        return new LinkChatRepository(tgChatId, url);
     }
 
     @Transactional
     @Override
-    public JdbcLinkChatRepository remove(long tgChatId, URI url) {
+    public LinkChatRepository remove(long tgChatId, URI url) {
 
-        JdbcListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
+        ListLinkRepository res = jdbcLinkBaseService.findAll(tgChatId);
 
         // check if url is already in table
         if (res.size() > 0 && Arrays.stream(res.links()).anyMatch(link -> link.url().equals(url))) {
@@ -62,11 +62,11 @@ public class JdbcLinkService implements LinkService {
             throw new ScrapperControllerException("Url отсутсвует для удаления: " + url, 400);
 
         }
-        return new JdbcLinkChatRepository(tgChatId, url);
+        return new LinkChatRepository(tgChatId, url);
     }
 
     @Override
-    public JdbcListLinkRepository listAll(long tgChatId) {
+    public ListLinkRepository listAll(long tgChatId) {
         return jdbcLinkBaseService.findAll(tgChatId);
     }
 }

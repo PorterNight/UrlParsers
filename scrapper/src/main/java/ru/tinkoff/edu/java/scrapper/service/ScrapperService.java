@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcLinkService;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
@@ -36,10 +36,6 @@ public class ScrapperService {
     public String registerChat(RegisterChatDto info) {
 
 
-
-//        if (((Long) info.id()).equals(555L))
-//            throw new ScrapperControllerException("Чат с id=" + info.id() + " уже зарегистрирован: ", 400);
-//
         log.info("ScrapperService: registering chat: " + info.id());
 
         jdbcTgChatService.register(info.id());
@@ -50,15 +46,6 @@ public class ScrapperService {
     @ResponseStatus
     public String deleteChat(DeleteChatDto info) {
 
-
-
-
-//        if (((Long) info.id()).equals(555L))
-//            throw new ScrapperControllerException("Невозможно удалить чат", 400);
-//
-//        if (info.id() < 0)
-//            throw new ScrapperControllerException("Чат не существует", 404);
-
         jdbcTgChatService.unregister(info.id());
 
         return "Чат успешно удален";
@@ -67,19 +54,7 @@ public class ScrapperService {
     @ResponseStatus
     public ListLinksResponse getLinks(GetLinksDto info) {
 
-//        if (info.tgChatId() < 0)
-//            throw new ScrapperControllerException("Ошибка получения ссылок", 400);
-//
-//        LinkResponse[] listLinksResponse = urls.stream()
-//                .map(url -> {
-//                    try {
-//                        return new LinkResponse(info.tgChatId(), new URI(url));
-//                    } catch (URISyntaxException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                })
-//                .toArray(LinkResponse[]::new);
-        JdbcListLinkRepository res = jdbcLinkService.listAll(info.tgChatId());
+        ListLinkRepository res = jdbcLinkService.listAll(info.tgChatId());
 
         LinkResponse[] linkResponses = Arrays.stream(res.links())
                 .map(link -> new LinkResponse(info.tgChatId(), link.url()))
@@ -91,27 +66,16 @@ public class ScrapperService {
 
     public LinkResponse addLink(AddLinkDto info) throws SQLException {
 
-//        if (info.tgChatId() < 0)
-//            throw new ScrapperControllerException("Ccылка отсутствует", 400);
 
-//        urls.add(info.link().toString());
-
-        jdbcLinkService.add( info.tgChatId(), info.link());
+        jdbcLinkService.add(info.tgChatId(), info.link());
 
         return new LinkResponse(info.tgChatId(), info.link());
     }
 
     public LinkResponse removeLink(RemoveLinkDto info) {
 
-//        if (info.tgChatId().equals(555L))
-//            throw new ScrapperControllerException("Ccылка не найдена", 404);
 
-//        if (!IsValidURL.isValidURL(info.link()))
-//            throw new ScrapperControllerException("Неверный URL: " + info.link(), 400);
-
-//        urls.remove(info.link().toString());
-
-        jdbcLinkService.remove( info.tgChatId(), info.link());
+        jdbcLinkService.remove(info.tgChatId(), info.link());
 
         return new LinkResponse(info.tgChatId(), info.link());
 

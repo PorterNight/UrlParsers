@@ -27,8 +27,8 @@ public class LinkChat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer linkId;
-    private Integer chatId;
+    private Long linkId;
+    private Long chatId;
 
     public LinkChat() {}
 
@@ -39,8 +39,8 @@ public class LinkChat implements Serializable {
 
     @ConstructorProperties({ "linkId", "chatId" })
     public LinkChat(
-        @NotNull Integer linkId,
-        @NotNull Integer chatId
+        @NotNull Long linkId,
+        @NotNull Long chatId
     ) {
         this.linkId = linkId;
         this.chatId = chatId;
@@ -51,14 +51,14 @@ public class LinkChat implements Serializable {
      */
     @jakarta.validation.constraints.NotNull
     @NotNull
-    public Integer getLinkId() {
+    public Long getLinkId() {
         return this.linkId;
     }
 
     /**
      * Setter for <code>LINK_CHAT.LINK_ID</code>.
      */
-    public void setLinkId(@NotNull Integer linkId) {
+    public void setLinkId(@NotNull Long linkId) {
         this.linkId = linkId;
     }
 
@@ -67,14 +67,14 @@ public class LinkChat implements Serializable {
      */
     @jakarta.validation.constraints.NotNull
     @NotNull
-    public Integer getChatId() {
+    public Long getChatId() {
         return this.chatId;
     }
 
     /**
      * Setter for <code>LINK_CHAT.CHAT_ID</code>.
      */
-    public void setChatId(@NotNull Integer chatId) {
+    public void setChatId(@NotNull Long chatId) {
         this.chatId = chatId;
     }
 

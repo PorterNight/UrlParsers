@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
+package ru.tinkoff.edu.java.scrapper.domain.repository;
 
-public record JdbcListLinkRepository(JdbcLinkRepository[] links, int size) {
+public record ListLinkRepository(LinkRepository[] links, int size) {
 }

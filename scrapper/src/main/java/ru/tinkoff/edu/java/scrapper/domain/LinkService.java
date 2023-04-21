@@ -1,13 +1,12 @@
 package ru.tinkoff.edu.java.scrapper.domain;
 
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkChatRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
 import java.net.URI;
-import java.sql.SQLException;
 
 public interface LinkService {
-    JdbcLinkChatRepository add(long tgChatId, URI url);
-    JdbcLinkChatRepository remove(long tgChatId, URI url);
-    JdbcListLinkRepository listAll(long tgChatId);
+    LinkChatRepository add(long tgChatId, URI url);
+    LinkChatRepository remove(long tgChatId, URI url);
+    ListLinkRepository listAll(long tgChatId);
 }

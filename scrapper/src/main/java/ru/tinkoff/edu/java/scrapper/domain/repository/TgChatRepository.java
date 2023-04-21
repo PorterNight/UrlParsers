@@ -1,3 +1,3 @@
-package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
+package ru.tinkoff.edu.java.scrapper.domain.repository;
 
-public record JdbcTgChatRepository(Long[] tgChatId, int length) {}
+public record TgChatRepository(Long[] tgChatId, int length) {}

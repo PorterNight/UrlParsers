@@ -66,12 +66,12 @@ public class LinkChat extends TableImpl<LinkChatRecord> {
     /**
      * The column <code>LINK_CHAT.LINK_ID</code>.
      */
-    public final TableField<LinkChatRecord, Integer> LINK_ID = createField(DSL.name("LINK_ID"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<LinkChatRecord, Long> LINK_ID = createField(DSL.name("LINK_ID"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>LINK_CHAT.CHAT_ID</code>.
      */
-    public final TableField<LinkChatRecord, Integer> CHAT_ID = createField(DSL.name("CHAT_ID"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<LinkChatRecord, Long> CHAT_ID = createField(DSL.name("CHAT_ID"), SQLDataType.BIGINT.nullable(false), this, "");
 
     private LinkChat(Name alias, Table<LinkChatRecord> aliased) {
         this(alias, aliased, null);
@@ -198,14 +198,14 @@ public class LinkChat extends TableImpl<LinkChatRecord> {
 
     @Override
     @NotNull
-    public Row2<Integer, Integer> fieldsRow() {
+    public Row2<Long, Long> fieldsRow() {
         return (Row2) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function2<? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function2<? super Long, ? super Long, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -213,7 +213,7 @@ public class LinkChat extends TableImpl<LinkChatRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super Long, ? super Long, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

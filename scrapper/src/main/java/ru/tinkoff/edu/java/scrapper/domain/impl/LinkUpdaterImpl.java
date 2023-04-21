@@ -3,6 +3,7 @@ package ru.tinkoff.edu.java.scrapper.domain.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import parsers.GithubUrlParser;
 import parsers.StackOverflowUrlParser;
@@ -12,8 +13,8 @@ import parsers.parsedUrl.ParsedUrl;
 import parsers.parsedUrl.StackOverflowParsedUrl;
 import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.LinkUpdater;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkWithTimeRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkWithTimeRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkWithTimeRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkWithTimeRepository;
 import ru.tinkoff.edu.java.scrapper.scheduler.LinkUpdaterScheduler;
 import ru.tinkoff.edu.java.scrapper.service.dto.GitHubClientResponseDto;
 import ru.tinkoff.edu.java.scrapper.service.dto.LinkUpdateNotifyRequestDto;
@@ -37,6 +38,9 @@ public class LinkUpdaterImpl implements LinkUpdater {
     private final StackOverflowClient stackOverflowClient;
     private final ScrapperToBotClient scrapperToBotClient;
 
+    @Value("${link.timeout.minutes}")
+    private int linkTimeoutMinutes;
+
     @Autowired
     public LinkUpdaterImpl(LinkBaseService linkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperToBotClient scrapperToBotClient) {
         this.linkBaseService = linkBaseService;
@@ -48,13 +52,15 @@ public class LinkUpdaterImpl implements LinkUpdater {
     @Override
     public int updateLinks() {
 
-        JdbcListLinkWithTimeRepository res = linkBaseService.findAllFilteredByTimeout(1);  // get only links were added more than N minites ago;
+
+
+        ListLinkWithTimeRepository res = linkBaseService.findAllFilteredByTimeout(linkTimeoutMinutes);  // get only links were added more than N minites ago;
 
         Arrays.stream(res.linksWithTime()).forEach(link -> log.info(link.url().toString() + " : " + link.newEventCreatedAt()));
 
         if (res.size() > 0) {  // there are unupdated links
 
-            for (JdbcLinkWithTimeRepository db_data : res.linksWithTime()) {
+            for (LinkWithTimeRepository db_data : res.linksWithTime()) {
 
                 UrlParser parser = new GithubUrlParser(new StackOverflowUrlParser(null));
                 ParsedUrl parsedLink = parser.parseLink(db_data.url().toString());
@@ -69,7 +75,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
 
 
 
-    private void updateLink(JdbcLinkWithTimeRepository db_data, String descriptionPrefix, OffsetDateTime updateTimeFromInternet) {
+    private void updateLink(LinkWithTimeRepository db_data, String descriptionPrefix, OffsetDateTime updateTimeFromInternet) {
 
         OffsetDateTime updateTimeFromDB = db_data.newEventCreatedAt();
         URI url = db_data.url();
@@ -77,7 +83,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
         if (updateTimeFromDB == null) { // if no newEventCreatedAt time in table link
             linkBaseService.addTime(url, updateTimeFromInternet);
         } else {
-            if (updateTimeFromInternet.isBefore(updateTimeFromDB) || updateTimeFromInternet.isEqual(updateTimeFromDB)) { // there is a new update
+            if (updateTimeFromInternet.isAfter(updateTimeFromDB)) { // there is a new update
                 linkBaseService.addTime(url, updateTimeFromInternet);
 
                 String description = descriptionPrefix;
@@ -89,7 +95,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
         }
     }
 
-    private void updateGitHubLink(ParsedUrl parsedLink, JdbcLinkWithTimeRepository db_data) {
+    private void updateGitHubLink(ParsedUrl parsedLink, LinkWithTimeRepository db_data) {
 
         if (parsedLink instanceof GithubParsedUrl) {
 
@@ -112,7 +118,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
         }
     }
 
-    private void updateStackOverflowLink(ParsedUrl parsedLink, JdbcLinkWithTimeRepository db_data) {
+    private void updateStackOverflowLink(ParsedUrl parsedLink, LinkWithTimeRepository db_data) {
 
         if (parsedLink instanceof StackOverflowParsedUrl) {
             int id = ((StackOverflowParsedUrl) parsedLink).id();

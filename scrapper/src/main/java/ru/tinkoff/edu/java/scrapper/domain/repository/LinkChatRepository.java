@@ -1,5 +1,5 @@
-package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
+package ru.tinkoff.edu.java.scrapper.domain.repository;
 
 import java.net.URI;
 
-public record JdbcLinkChatRepository(long chat_id, URI url) {}
+public record LinkChatRepository(long chat_id, URI url) {}

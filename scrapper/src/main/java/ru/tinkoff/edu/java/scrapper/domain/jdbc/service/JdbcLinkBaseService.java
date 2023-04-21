@@ -16,11 +16,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
-public class JdbcLinkBaseService2 implements LinkBaseService {
+public class JdbcLinkBaseService implements LinkBaseService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcLinkBaseService2(JdbcTemplate jdbcTemplate) {
+    public JdbcLinkBaseService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

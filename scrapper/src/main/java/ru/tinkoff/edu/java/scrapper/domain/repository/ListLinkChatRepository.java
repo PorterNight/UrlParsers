@@ -1,3 +1,3 @@
-package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
+package ru.tinkoff.edu.java.scrapper.domain.repository;
 
-public record JdbcListLinkChatRepository(JdbcLinkChatRepository[] linkChat, int size) {}
+public record ListLinkChatRepository(LinkChatRepository[] linkChat, int size) {}

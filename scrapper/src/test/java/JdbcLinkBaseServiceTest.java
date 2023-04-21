@@ -10,8 +10,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -105,12 +105,12 @@ public class JdbcLinkBaseServiceTest extends IntegrationEnvironment {
         Arrays.stream(testUrls).forEach(url -> linkBaseService.add(testChatId, url));
 
         // get all links for the chat
-        JdbcListLinkRepository allLinks = linkBaseService.findAll(testChatId);
+        ListLinkRepository allLinks = linkBaseService.findAll(testChatId);
 
         assertEquals(testUrls.length, allLinks.size());
 
         List<URI> actualUrls = Arrays.asList(allLinks.links()).stream()
-                .map(JdbcLinkRepository::url)
+                .map(LinkRepository::url)
                 .toList();
 
         assertEquals(Arrays.asList(testUrls), actualUrls);

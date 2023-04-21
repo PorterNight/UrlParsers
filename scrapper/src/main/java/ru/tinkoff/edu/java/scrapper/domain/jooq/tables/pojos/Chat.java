@@ -29,7 +29,7 @@ public class Chat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer chatId;
+    private Long chatId;
     private OffsetDateTime updatedAt;
 
     public Chat() {}
@@ -41,7 +41,7 @@ public class Chat implements Serializable {
 
     @ConstructorProperties({ "chatId", "updatedAt" })
     public Chat(
-        @NotNull Integer chatId,
+        @NotNull Long chatId,
         @Nullable OffsetDateTime updatedAt
     ) {
         this.chatId = chatId;
@@ -52,14 +52,14 @@ public class Chat implements Serializable {
      * Getter for <code>CHAT.CHAT_ID</code>.
      */
     @NotNull
-    public Integer getChatId() {
+    public Long getChatId() {
         return this.chatId;
     }
 
     /**
      * Setter for <code>CHAT.CHAT_ID</code>.
      */
-    public void setChatId(@NotNull Integer chatId) {
+    public void setChatId(@NotNull Long chatId) {
         this.chatId = chatId;
     }
 
