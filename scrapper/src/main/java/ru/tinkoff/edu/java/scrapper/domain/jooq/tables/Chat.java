@@ -66,7 +66,7 @@ public class Chat extends TableImpl<ChatRecord> {
     /**
      * The column <code>CHAT.CHAT_ID</code>.
      */
-    public final TableField<ChatRecord, Integer> CHAT_ID = createField(DSL.name("CHAT_ID"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<ChatRecord, Long> CHAT_ID = createField(DSL.name("CHAT_ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>CHAT.UPDATED_AT</code>.
@@ -114,8 +114,8 @@ public class Chat extends TableImpl<ChatRecord> {
 
     @Override
     @NotNull
-    public Identity<ChatRecord, Integer> getIdentity() {
-        return (Identity<ChatRecord, Integer>) super.getIdentity();
+    public Identity<ChatRecord, Long> getIdentity() {
+        return (Identity<ChatRecord, Long>) super.getIdentity();
     }
 
     @Override
@@ -175,14 +175,14 @@ public class Chat extends TableImpl<ChatRecord> {
 
     @Override
     @NotNull
-    public Row2<Integer, OffsetDateTime> fieldsRow() {
+    public Row2<Long, OffsetDateTime> fieldsRow() {
         return (Row2) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function2<? super Integer, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function2<? super Long, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -190,7 +190,7 @@ public class Chat extends TableImpl<ChatRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super Integer, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super Long, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.domain.jdbc.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,12 +16,12 @@ import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Service
-public class JdbcLinkBaseService2 implements LinkBaseService {
+public class JdbcLinkBaseService implements LinkBaseService {
 
-    private final JdbcTemplate jdbcTemplate;
 
-    public JdbcLinkBaseService2(JdbcTemplate jdbcTemplate) {
+    private JdbcTemplate jdbcTemplate;
+
+    public JdbcLinkBaseService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

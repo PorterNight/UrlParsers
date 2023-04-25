@@ -3,34 +3,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcTgChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcTgChatBaseService;
 
-import java.net.URI;
+import ru.tinkoff.edu.java.scrapper.configuration.JdbcAccessConfiguration;
+import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
+import ru.tinkoff.edu.java.scrapper.domain.repository.TgChatRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
-@SpringBootTest(classes = IntegrationEnvironment.IntegrationEnvironmentConfig.class)
+@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JdbcAccessConfiguration.class})
 @ExtendWith(SpringExtension.class)
 public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
 
+    @Autowired
+    private TgChatBaseService tgChatBaseService;
 
     @Autowired
-    private final TgChatBaseService jdbcTgChatBaseService;
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public JdbcTgChatBaseServiceTest(TgChatBaseService jdbcTgChatBaseService, JdbcTemplate jdbcTemplate) {
-        this.jdbcTgChatBaseService = jdbcTgChatBaseService;
-        this.jdbcTemplate = jdbcTemplate;
-    }
+
 
     @BeforeEach
     void setUp() {
@@ -44,7 +41,7 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
         // Add a new chat
 
         long testChatId = 2345235;
-        jdbcTgChatBaseService.add(testChatId);
+        tgChatBaseService.add(testChatId);
 
         String sql = "SELECT chat_id FROM chat WHERE chat_id = ?";
         Long chatId = jdbcTemplate.queryForObject(sql, Long.class, testChatId);
@@ -57,10 +54,10 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
 
         // add a chat to be removed
         long testChatId = 2233;
-        jdbcTgChatBaseService.add(testChatId);
+        tgChatBaseService.add(testChatId);
 
         // remove the chat
-        jdbcTgChatBaseService.remove(testChatId);
+        tgChatBaseService.remove(testChatId);
 
         String sql = "SELECT chat_id FROM chat WHERE chat_id = ?";
         Exception e = assertThrows(EmptyResultDataAccessException.class, () -> {
@@ -78,16 +75,16 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
         // add chat records
         long[] testChatIds = {1001, 1002, 1003};
         for (long chatId : testChatIds) {
-            jdbcTgChatBaseService.add(chatId);
+            tgChatBaseService.add(chatId);
         }
 
         // get all chats
-        JdbcTgChatRepository allChats = jdbcTgChatBaseService.findAll();
+        TgChatRepository allChats = tgChatBaseService.findAll();
 
-        assertEquals(testChatIds.length, allChats.getLength());
+        assertEquals(testChatIds.length, allChats.length());
 
         for (int i = 0; i < testChatIds.length; i++) {
-            assertEquals(testChatIds[i], allChats.getTgChatId()[i]);
+            assertEquals(testChatIds[i], allChats.tgChatId()[i]);
         }
     }
 

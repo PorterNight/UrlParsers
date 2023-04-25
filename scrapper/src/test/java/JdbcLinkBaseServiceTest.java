@@ -9,9 +9,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import ru.tinkoff.edu.java.scrapper.configuration.JdbcAccessConfiguration;
 import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcListLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
+import ru.tinkoff.edu.java.scrapper.domain.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,18 +23,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@SpringBootTest(classes = IntegrationEnvironment.IntegrationEnvironmentConfig.class)
+@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JdbcAccessConfiguration.class})
 @ExtendWith(SpringExtension.class)
 public class JdbcLinkBaseServiceTest extends IntegrationEnvironment {
 
-    private final LinkBaseService linkBaseService;
-    private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    private LinkBaseService linkBaseService;
 
     @Autowired
-    public JdbcLinkBaseServiceTest(LinkBaseService linkBaseService, JdbcTemplate jdbcTemplate) {
-        this.linkBaseService = linkBaseService;
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private JdbcTemplate jdbcTemplate;
+
 
     @BeforeEach
     void setUp() {
@@ -105,12 +105,12 @@ public class JdbcLinkBaseServiceTest extends IntegrationEnvironment {
         Arrays.stream(testUrls).forEach(url -> linkBaseService.add(testChatId, url));
 
         // get all links for the chat
-        JdbcListLinkRepository allLinks = linkBaseService.findAll(testChatId);
+        ListLinkRepository allLinks = linkBaseService.findAll(testChatId);
 
         assertEquals(testUrls.length, allLinks.size());
 
         List<URI> actualUrls = Arrays.asList(allLinks.links()).stream()
-                .map(JdbcLinkRepository::url)
+                .map(LinkRepository::url)
                 .toList();
 
         assertEquals(Arrays.asList(testUrls), actualUrls);

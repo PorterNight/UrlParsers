@@ -6,4 +6,4 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "scrapper", ignoreUnknownFields = false)
-public record ScrapperConfig(@NotNull String test) {}
+public record ScrapperConfig(@NotNull String test, AccessType databaseAccessType) {}

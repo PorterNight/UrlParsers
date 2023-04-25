@@ -1,15 +1,17 @@
 package ru.tinkoff.edu.java.scrapper.domain.jdbc.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcTgChatRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.TgChatRepository;
 
 import java.util.List;
 
-@Service
+@ComponentScan({"ru.tinkoff.edu.java.scrapper.configuration"})
 public class JdbcTgChatBaseService implements TgChatBaseService {
+
 
     private final JdbcTemplate jdbcTemplate;
     public JdbcTgChatBaseService(JdbcTemplate jdbcTemplate) {
@@ -28,12 +30,12 @@ public class JdbcTgChatBaseService implements TgChatBaseService {
     }
 
     @Override
-    public JdbcTgChatRepository findAll() {
+    public TgChatRepository findAll() {
         String sql = "SELECT chat_id FROM chat";
         List<Long> chatIds = jdbcTemplate.queryForList(sql, Long.class);
         Long[] chatId = chatIds.stream().toArray(Long[]::new);
         int length = chatId.length;
 
-        return new JdbcTgChatRepository(chatId, length);
+        return new TgChatRepository(chatId, length);
     }
 }

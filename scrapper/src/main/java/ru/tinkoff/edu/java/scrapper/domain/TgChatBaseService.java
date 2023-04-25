@@ -1,8 +1,8 @@
 package ru.tinkoff.edu.java.scrapper.domain;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcTgChatRepository;
+import ru.tinkoff.edu.java.scrapper.domain.repository.TgChatRepository;
 
 public interface TgChatBaseService {
     void add(long tgChatId);
     void remove(long tgChatId);
-    JdbcTgChatRepository findAll();
+    TgChatRepository findAll();
 }

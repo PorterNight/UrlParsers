@@ -1,6 +1,6 @@
-package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
+package ru.tinkoff.edu.java.scrapper.domain.repository;
 
 import java.net.URI;
 
-public record JdbcLinkRepository(URI url) {
+public record LinkRepository(URI url) {
 }
