@@ -13,6 +13,7 @@ import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaTgChatBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.repository.TgChatRepository;
 
 import java.util.NoSuchElementException;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JpaTgChatBaseServiceTest extends IntegrationEnvironment {
 
     @Autowired
-    private TgChatBaseService tgChatBaseService;
+    private TgChatBaseService jpaTgChatBaseService;
 
     @Autowired
     private JpaLinkRepository jpaLinkRepository;
@@ -43,7 +44,7 @@ public class JpaTgChatBaseServiceTest extends IntegrationEnvironment {
     void addTest() {
         long testChatId = 2233;
 
-        tgChatBaseService.add(testChatId);
+        jpaTgChatBaseService.add(testChatId);
 
         Long chatId = jpaChatRepository.findById(testChatId).get().getChatId();
 
@@ -57,10 +58,10 @@ public class JpaTgChatBaseServiceTest extends IntegrationEnvironment {
 
         // add a chat to be removed
         long testChatId = 2233;
-        tgChatBaseService.add(testChatId);
+        jpaTgChatBaseService.add(testChatId);
 
         // remove the chat
-        tgChatBaseService.remove(testChatId);
+        jpaTgChatBaseService.remove(testChatId);
 
         Exception e = assertThrows(NoSuchElementException.class, () -> {
             jpaChatRepository.findById(testChatId).orElseThrow();
@@ -79,11 +80,11 @@ public class JpaTgChatBaseServiceTest extends IntegrationEnvironment {
         // add chat records
         long[] testChatIds = {1001, 1002, 1003};
         for (long chatId : testChatIds) {
-            tgChatBaseService.add(chatId);
+            jpaTgChatBaseService.add(chatId);
         }
 
         // get all chats
-        TgChatRepository allChats = tgChatBaseService.findAll();
+        TgChatRepository allChats = jpaTgChatBaseService.findAll();
 
         assertEquals(testChatIds.length, allChats.length());
 

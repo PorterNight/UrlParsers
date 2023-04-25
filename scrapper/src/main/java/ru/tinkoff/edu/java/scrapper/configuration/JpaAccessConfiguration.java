@@ -33,8 +33,8 @@ public class JpaAccessConfiguration {
     }
 
     @Bean
-    public TgChatService jpaTgChatService(JpaChatRepository jpaChatRepository) {
-        return new JpaTgChatService(jpaChatRepository);
+    public TgChatService jpaTgChatService(TgChatBaseService tgChatBaseService, JpaChatRepository jpaChatRepository) {
+        return new JpaTgChatService(tgChatBaseService, jpaChatRepository);
     }
 
     @Bean
