@@ -5,15 +5,11 @@ import org.jooq.meta.jaxb.Generate;
 import org.jooq.meta.jaxb.Generator;
 import org.jooq.meta.jaxb.Property;
 import org.jooq.meta.jaxb.Target;
-import org.jooq.Binding;
-import org.jooq.impl.DefaultBinding;
-import org.jooq.meta.jaxb.ForcedType;
 
 import java.lang.annotation.*;
 
 public class JooqCodegen {
     public static void main(String[] args) throws Exception {
-
         Database database = new Database()
                 .withName("org.jooq.meta.extensions.liquibase.LiquibaseDatabase")
                 .withProperties(

@@ -31,14 +31,6 @@ public class ScrapperService {
 
     @Autowired
     private TgChatService tgChatService;
-    //private final JdbcTgChatService jdbcTgChatService;
-
-
-//    public ScrapperService(LinkService linkService, TgChatService tgChatService) {
-//        this.linkService = linkService;
-//        this.tgChatService = tgChatService;
-//    }
-
 
     @ResponseStatus
     public String registerChat(RegisterChatDto info) {
