@@ -28,7 +28,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JdbcAccessConfiguration.class, JpaAccessConfiguration.class, JpaChatRepository.class, JpaLinkRepository.class, JpaLinkChatRepository.class})
+@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JdbcAccessConfiguration.class})
 @ExtendWith(SpringExtension.class)
 public class JdbcLinkBaseServiceTest extends IntegrationEnvironment {
 
