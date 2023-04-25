@@ -14,7 +14,6 @@ import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 import java.net.URI;
 import java.util.Arrays;
 
-//@Service
 public class JdbcLinkService implements LinkService {
 
     private LinkBaseService linkBaseService;

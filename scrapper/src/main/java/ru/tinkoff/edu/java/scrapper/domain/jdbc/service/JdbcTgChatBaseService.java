@@ -9,7 +9,6 @@ import ru.tinkoff.edu.java.scrapper.domain.repository.TgChatRepository;
 
 import java.util.List;
 
-@ComponentScan({"ru.tinkoff.edu.java.scrapper.configuration"})
 public class JdbcTgChatBaseService implements TgChatBaseService {
 
 

@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class JdbcTgChatService implements TgChatService {
 
-//    @Autowired
+
     private TgChatBaseService tgChatBaseService;
 
     public JdbcTgChatService(TgChatBaseService tgChatBaseService) {
