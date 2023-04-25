@@ -14,6 +14,8 @@ import ru.tinkoff.edu.java.scrapper.domain.jpa.entity.LinkChat;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaLinkService;
+import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaTgChatService;
 import ru.tinkoff.edu.java.scrapper.domain.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
@@ -31,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JpaIntegrationServiceTest extends IntegrationEnvironment {
 
     @Autowired
-    private LinkService jpalinkService;
+    private LinkService jpaLinkService;
 
     @Autowired
     private TgChatService jpaTgChatService;
@@ -60,10 +62,10 @@ public class JpaIntegrationServiceTest extends IntegrationEnvironment {
         jpaTgChatService.register(testChatId2);
 
         // add link
-        jpalinkService.add(testChatId1, testUrl1);
-        jpalinkService.add(testChatId1, testUrl2);
-        jpalinkService.add(testChatId2, testUrl1);
-        jpalinkService.add(testChatId2, testUrl2);
+        jpaLinkService.add(testChatId1, testUrl1);
+        jpaLinkService.add(testChatId1, testUrl2);
+        jpaLinkService.add(testChatId2, testUrl1);
+        jpaLinkService.add(testChatId2, testUrl2);
 
         String actualUrl = jpaLinkRepository.findByUrl(testUrl1.toString()).get().getUrl();
         assertEquals(testUrl1.toString(), actualUrl);
@@ -117,13 +119,13 @@ public class JpaIntegrationServiceTest extends IntegrationEnvironment {
         jpaTgChatService.register(testChatId2);
 
         // add link
-        jpalinkService.add(testChatId1, testUrl1);
-        jpalinkService.add(testChatId1, testUrl2);
-        jpalinkService.add(testChatId2, testUrl1);
-        jpalinkService.add(testChatId2, testUrl2);
+        jpaLinkService.add(testChatId1, testUrl1);
+        jpaLinkService.add(testChatId1, testUrl2);
+        jpaLinkService.add(testChatId2, testUrl1);
+        jpaLinkService.add(testChatId2, testUrl2);
 
         // remove one url
-        jpalinkService.remove(testChatId2, testUrl2);
+        jpaLinkService.remove(testChatId2, testUrl2);
 
         Long actualChatId1 = jpaChatRepository.findById(testChatId1).get().getChatId();
         assertEquals(testChatId1, actualChatId1);
@@ -160,10 +162,10 @@ public class JpaIntegrationServiceTest extends IntegrationEnvironment {
                 new URI("https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c-c"),
                 new URI("https://github.com/AykutSarac/jsoncrack.com")
         };
-        Arrays.stream(testUrls).forEach(url -> jpalinkService.add(testChatId, url));
+        Arrays.stream(testUrls).forEach(url -> jpaLinkService.add(testChatId, url));
 
         // get all links for the chat
-        ListLinkRepository allLinks = jpalinkService.listAll(testChatId);
+        ListLinkRepository allLinks = jpaLinkService.listAll(testChatId);
 
         assertEquals(testUrls.length, allLinks.size());
 

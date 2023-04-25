@@ -37,12 +37,12 @@ import javax.sql.DataSource;
     }
 
     @Bean
-    public LinkBaseService jdbcLinkBaseService(JdbcTemplate jdbcTemplate) {
+    public LinkBaseService linkBaseService(JdbcTemplate jdbcTemplate) {
         return new JdbcLinkBaseService(jdbcTemplate);
     }
 
     @Bean
-    public LinkService jdbcLinkService(LinkBaseService linkBaseService) {
+    public LinkService linkService(LinkBaseService linkBaseService) {
         return new JdbcLinkService(linkBaseService);
     }
 

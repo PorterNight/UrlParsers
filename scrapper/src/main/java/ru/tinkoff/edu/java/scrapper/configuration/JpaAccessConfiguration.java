@@ -33,17 +33,17 @@ public class JpaAccessConfiguration {
     }
 
     @Bean
-    public TgChatService jpaTgChatService(TgChatBaseService tgChatBaseService, JpaChatRepository jpaChatRepository) {
+    public TgChatService tgChatService(TgChatBaseService tgChatBaseService, JpaChatRepository jpaChatRepository) {
         return new JpaTgChatService(tgChatBaseService, jpaChatRepository);
     }
 
     @Bean
-    public LinkBaseService jpaLinkBaseService(JpaLinkRepository jpaLinkRepository, JpaChatRepository jpaChatRepository, JpaLinkChatRepository jpaLinkChatRepository) {
+    public LinkBaseService linkBaseService(JpaLinkRepository jpaLinkRepository, JpaChatRepository jpaChatRepository, JpaLinkChatRepository jpaLinkChatRepository) {
         return new JpaLinkBaseService(jpaLinkRepository, jpaChatRepository, jpaLinkChatRepository);
     }
 
     @Bean
-    public LinkService jpaLinkService(LinkBaseService linkBaseService, JpaChatRepository jpaChatRepository, JpaLinkRepository jpaLinkRepository, JpaLinkChatRepository jpaLinkChatRepository) {
+    public LinkService linkService(LinkBaseService linkBaseService, JpaChatRepository jpaChatRepository, JpaLinkRepository jpaLinkRepository, JpaLinkChatRepository jpaLinkChatRepository) {
         return new JpaLinkService(linkBaseService, jpaChatRepository, jpaLinkRepository, jpaLinkChatRepository);
     }
 }
