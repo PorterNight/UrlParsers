@@ -36,7 +36,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
     private final LinkBaseService linkBaseService;
     private final GitHubClient gitHubClient;
     private final StackOverflowClient stackOverflowClient;
-    private ScrapperNotifierService scrapperNotifierService;
+    private final ScrapperNotifierService scrapperNotifierService;
 
     @Value("${link.timeout.minutes}")
     private int linkTimeoutMinutes;
@@ -46,7 +46,6 @@ public class LinkUpdaterImpl implements LinkUpdater {
         this.linkBaseService = linkBaseService;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
-
         this.scrapperNotifierService = scrapperNotifierService;
     }
 
