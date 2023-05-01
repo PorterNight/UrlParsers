@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.telegramBot.Bot;
 import ru.tinkoff.edu.java.bot.telegramBot.UserMessageProcessor;
 import ru.tinkoff.edu.java.bot.telegramBot.commands.BotCommand;
+import ru.tinkoff.edu.java.bot.exceptions.TgBotUpdateSendException;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,6 +53,7 @@ public class BotImpl implements Bot {
             @Override
             public void onFailure(SendMessage request, IOException e) {
                 System.out.println("Failed to send message: " + e.getMessage());
+                throw new TgBotUpdateSendException("Failed to send message");
             }
         });
     }
@@ -59,6 +61,7 @@ public class BotImpl implements Bot {
     public void sendUpdateLinkInfo(long chatId, String info) {
         SendMessage sendMessage = new SendMessage(chatId, info).replyMarkup(simpleKeyboard());
         bot.execute(sendMessage);
+        //throw new TgBotUpdateSendException("Failed to send message");
     }
 
     private Keyboard simpleKeyboard() {

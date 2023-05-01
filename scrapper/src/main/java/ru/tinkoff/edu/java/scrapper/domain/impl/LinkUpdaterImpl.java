@@ -36,17 +36,18 @@ public class LinkUpdaterImpl implements LinkUpdater {
     private final LinkBaseService linkBaseService;
     private final GitHubClient gitHubClient;
     private final StackOverflowClient stackOverflowClient;
-    private final ScrapperToBotClient scrapperToBotClient;
+    private ScrapperNotifierService scrapperNotifierService;
 
     @Value("${link.timeout.minutes}")
     private int linkTimeoutMinutes;
 
     @Autowired
-    public LinkUpdaterImpl(LinkBaseService linkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperToBotClient scrapperToBotClient) {
+    public LinkUpdaterImpl(LinkBaseService linkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperNotifierService scrapperNotifierService) {
         this.linkBaseService = linkBaseService;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
-        this.scrapperToBotClient = scrapperToBotClient;
+
+        this.scrapperNotifierService = scrapperNotifierService;
     }
 
     @Override
@@ -82,6 +83,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
         if (updateTimeFromDB == null) { // if no newEventCreatedAt time in table link
             linkBaseService.addTime(url, updateTimeFromInternet);
         } else {
+            //if (updateTimeFromInternet.isBefore(updateTimeFromDB) || updateTimeFromInternet.isEqual(updateTimeFromDB)) { // there is a new update
             if (updateTimeFromInternet.isAfter(updateTimeFromDB)) { // there is a new update
                 linkBaseService.addTime(url, updateTimeFromInternet);
 
@@ -89,7 +91,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
                 log.info(description);
 
                 LinkUpdateNotifyRequestDto data = new LinkUpdateNotifyRequestDto(db_data.url_id(), url, description, db_data.tgChatIds());
-                scrapperToBotClient.sendTrackedLinkNotify(data).blockLast();   // send updates to bot
+                scrapperNotifierService.send(data);
             }
         }
     }

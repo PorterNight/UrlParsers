@@ -18,7 +18,7 @@ public class BotController {
     }
 
     @PostMapping(value="/updates", produces = "application/json")
-    public ResponseEntity<String> handleUpdate(@Valid @RequestBody LinkUpdate link) {
+    public ResponseEntity<String> handleUpdate(@Valid @RequestBody LinkUpdate link) throws Exception {
         UpdateLinkDto linkDto = new UpdateLinkDto(link.id(), link.url(), link.description(), link.tgChatIds());
         String result = service.updateLink(linkDto);
 
