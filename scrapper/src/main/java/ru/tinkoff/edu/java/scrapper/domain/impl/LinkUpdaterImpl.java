@@ -82,8 +82,8 @@ public class LinkUpdaterImpl implements LinkUpdater {
         if (updateTimeFromDB == null) { // if no newEventCreatedAt time in table link
             linkBaseService.addTime(url, updateTimeFromInternet);
         } else {
-            //if (updateTimeFromInternet.isBefore(updateTimeFromDB) || updateTimeFromInternet.isEqual(updateTimeFromDB)) { // there is a new update
-            if (updateTimeFromInternet.isAfter(updateTimeFromDB)) { // there is a new update
+            if (updateTimeFromInternet.isBefore(updateTimeFromDB) || updateTimeFromInternet.isEqual(updateTimeFromDB)) { // there is a new update
+            //if (updateTimeFromInternet.isAfter(updateTimeFromDB)) { // there is a new update
                 linkBaseService.addTime(url, updateTimeFromInternet);
 
                 String description = descriptionPrefix;

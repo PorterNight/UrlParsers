@@ -51,8 +51,8 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
-    public Binding dlqBinding(Queue dlqQueue, DirectExchange dlqExchange) {
-        return BindingBuilder.bind(dlqQueue).to(dlqExchange).with(routingKey);
+    public Binding dlqBinding(Queue dlqQueue, FanoutExchange dlqExchange) {
+        return BindingBuilder.bind(dlqQueue).to(dlqExchange);
     }
 
     @Bean
