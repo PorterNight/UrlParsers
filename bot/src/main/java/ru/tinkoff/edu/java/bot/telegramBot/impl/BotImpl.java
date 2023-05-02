@@ -61,7 +61,7 @@ public class BotImpl implements Bot {
     public void sendUpdateLinkInfo(long chatId, String info) {
         SendMessage sendMessage = new SendMessage(chatId, info).replyMarkup(simpleKeyboard());
         bot.execute(sendMessage);
-        throw new TgBotUpdateSendException("Failed to send message");
+        //throw new TgBotUpdateSendException("Failed to send message"); //for test
     }
 
     private Keyboard simpleKeyboard() {

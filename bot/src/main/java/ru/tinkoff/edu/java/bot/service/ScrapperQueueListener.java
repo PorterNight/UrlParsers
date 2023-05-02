@@ -32,7 +32,7 @@ public class ScrapperQueueListener {
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.dlq}")
-    public void processFailedMessagesRequeue(Message failedMessage) {
+    public void logoutDlqMessages(Message failedMessage) {
         log.warn("RabbitMQ DLQ, error while sending update: " + failedMessage);
     }
 }

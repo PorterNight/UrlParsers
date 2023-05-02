@@ -13,6 +13,7 @@ import parsers.parsedUrl.ParsedUrl;
 import parsers.parsedUrl.StackOverflowParsedUrl;
 import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.LinkUpdater;
+import ru.tinkoff.edu.java.scrapper.domain.ScrapperNotifier;
 import ru.tinkoff.edu.java.scrapper.domain.repository.LinkWithTimeRepository;
 import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkWithTimeRepository;
 import ru.tinkoff.edu.java.scrapper.scheduler.LinkUpdaterScheduler;
@@ -36,13 +37,13 @@ public class LinkUpdaterImpl implements LinkUpdater {
     private final LinkBaseService linkBaseService;
     private final GitHubClient gitHubClient;
     private final StackOverflowClient stackOverflowClient;
-    private final ScrapperNotifierService scrapperNotifierService;
+    private final ScrapperNotifier scrapperNotifierService;
 
     @Value("${link.timeout.minutes}")
     private int linkTimeoutMinutes;
 
     @Autowired
-    public LinkUpdaterImpl(LinkBaseService linkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperNotifierService scrapperNotifierService) {
+    public LinkUpdaterImpl(LinkBaseService linkBaseService, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, ScrapperNotifier scrapperNotifierService) {
         this.linkBaseService = linkBaseService;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
@@ -82,8 +83,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
         if (updateTimeFromDB == null) { // if no newEventCreatedAt time in table link
             linkBaseService.addTime(url, updateTimeFromInternet);
         } else {
-            if (updateTimeFromInternet.isBefore(updateTimeFromDB) || updateTimeFromInternet.isEqual(updateTimeFromDB)) { // there is a new update
-            //if (updateTimeFromInternet.isAfter(updateTimeFromDB)) { // there is a new update
+            if (updateTimeFromInternet.isAfter(updateTimeFromDB)) { // there is a new update
                 linkBaseService.addTime(url, updateTimeFromInternet);
 
                 String description = descriptionPrefix;

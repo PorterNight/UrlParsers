@@ -72,5 +72,4 @@ public class RabbitMQConfiguration {
         classMapper.setIdClassMapping(mappings);
         return classMapper;
     }
-
 }
