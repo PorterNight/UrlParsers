@@ -1,32 +1,33 @@
+import configuration.IntegrationEnvironment;
+import configuration.TestsConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ru.tinkoff.edu.java.scrapper.configuration.JdbcAccessConfiguration;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcTgChatBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.repository.TgChatRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
-@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JdbcAccessConfiguration.class})
+@SpringBootTest(classes = {TestsConfiguration.class})
 @ExtendWith(SpringExtension.class)
 public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
 
     @Autowired
-    private TgChatBaseService tgChatBaseService;
+    private JdbcTgChatBaseService tgChatBaseService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
 
 
     @BeforeEach
@@ -37,6 +38,8 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void addTest() {
         // Add a new chat
 
@@ -50,6 +53,8 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void removeTest() {
 
         // add a chat to be removed
@@ -71,6 +76,8 @@ public class JdbcTgChatBaseServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void findAllTest() {
         // add chat records
         long[] testChatIds = {1001, 1002, 1003};

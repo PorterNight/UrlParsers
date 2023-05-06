@@ -1,15 +1,12 @@
+import configuration.IntegrationEnvironment;
+import configuration.TestsConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.configuration.JpaAccessConfiguration;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkRepository;
@@ -20,14 +17,12 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JpaAccessConfiguration.class, JpaChatRepository.class, JpaLinkRepository.class, JpaLinkChatRepository.class})
+@SpringBootTest(classes = {TestsConfiguration.class})
 @ExtendWith(SpringExtension.class)
-@EnableJpaRepositories("ru.tinkoff.edu.java.scrapper.domain.jpa")
-@EntityScan("ru.tinkoff.edu.java.scrapper.domain.jpa.entity")
 public class JpaTgChatBaseServiceTest extends IntegrationEnvironment {
 
     @Autowired
-    private TgChatBaseService jpaTgChatBaseService;
+    private JpaTgChatBaseService jpaTgChatBaseService;
 
     @Autowired
     private JpaLinkRepository jpaLinkRepository;
@@ -78,6 +73,7 @@ public class JpaTgChatBaseServiceTest extends IntegrationEnvironment {
     @Rollback
     void findAllTest() {
         // add chat records
+
         long[] testChatIds = {1001, 1002, 1003};
         for (long chatId : testChatIds) {
             jpaTgChatBaseService.add(chatId);

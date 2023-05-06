@@ -1,3 +1,5 @@
+package configuration;
+
 import jakarta.persistence.EntityManagerFactory;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
@@ -7,11 +9,9 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.DirectoryResourceAccessor;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -22,22 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.LinkService;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcLinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcTgChatBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaLinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaLinkService;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaTgChatBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaTgChatService;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -73,7 +59,7 @@ public abstract class IntegrationEnvironment {
     static final String PASSWORD = PROPERTIES.getProperty("testsContainer.password");
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
+    public static final SingletonPostgreSQLContainer POSTGRESQL_CONTAINER = SingletonPostgreSQLContainer.getInstance();
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
@@ -82,18 +68,14 @@ public abstract class IntegrationEnvironment {
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
     }
 
-    static {
-        POSTGRESQL_CONTAINER = new PostgreSQLContainer(DATABASE_IMAGE)
-                .withDatabaseName(DATABASE_NAME)
-                .withUsername(USERNAME)
-                .withPassword(PASSWORD);
-        POSTGRESQL_CONTAINER.start();
+    @BeforeAll
+    static void init() {
 
         // create path to migration XML file
         Path migrationsPath = new File(".").toPath().toAbsolutePath().getParent().getParent().resolve(MIGRATION_DIR);
         String changelogPath = MIGRATION_FILE;
 
-        System.out.println("IntegrationEnvironment: path" + migrationsPath.toString());
+        System.out.println("configuration.IntegrationEnvironment: path" + migrationsPath.toString());
 
         try (Connection connection = DriverManager.getConnection(
                 POSTGRESQL_CONTAINER.getJdbcUrl(),
@@ -111,8 +93,9 @@ public abstract class IntegrationEnvironment {
         }
     }
 
+
     @Configuration
-    static class IntegrationEnvironmentConfig {
+    public static class IntegrationEnvironmentConfig {
 
         @Bean
         public DataSource dataSource() {
@@ -125,13 +108,11 @@ public abstract class IntegrationEnvironment {
         }
 
         @Bean
-        @ConditionalOnProperty(prefix = "scrapper", name = "database-access-type", havingValue = "jdbc")
         public PlatformTransactionManager jdbcTransactionManager(DataSource dataSource) {
             return new DataSourceTransactionManager(dataSource);
         }
 
         @Bean
-        @ConditionalOnProperty(prefix = "scrapper", name = "database-access-type", havingValue = "jpa")
         public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
             JpaTransactionManager transactionManager = new JpaTransactionManager();
             transactionManager.setEntityManagerFactory(entityManagerFactory);
@@ -139,7 +120,6 @@ public abstract class IntegrationEnvironment {
         }
 
         @Bean
-        @ConditionalOnProperty(prefix = "scrapper", name = "database-access-type", havingValue = "jpa")
         public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
             LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
             em.setDataSource(dataSource());
@@ -150,7 +130,6 @@ public abstract class IntegrationEnvironment {
             return em;
         }
 
-        @ConditionalOnProperty(prefix = "scrapper", name = "database-access-type", havingValue = "jpa")
         Properties additionalJpaProperties() {
             Properties properties = new Properties();
             properties.setProperty("hibernate.hbm2ddl.auto", "none");

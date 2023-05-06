@@ -1,21 +1,19 @@
+import configuration.IntegrationEnvironment;
+import configuration.TestsConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.tinkoff.edu.java.scrapper.configuration.JpaAccessConfiguration;
 import ru.tinkoff.edu.java.scrapper.domain.LinkService;
 import ru.tinkoff.edu.java.scrapper.domain.TgChatService;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.entity.LinkChat;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaLinkService;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.service.JpaTgChatService;
 import ru.tinkoff.edu.java.scrapper.domain.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
@@ -27,9 +25,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JpaAccessConfiguration.class, JpaChatRepository.class, JpaLinkRepository.class, JpaLinkChatRepository.class})
+@SpringBootTest(classes = {TestsConfiguration.class})
 @ExtendWith(SpringExtension.class)
-@EnableJpaRepositories("ru.tinkoff.edu.java.scrapper.domain.jpa.repository")
 public class JpaIntegrationServiceTest extends IntegrationEnvironment {
 
     @Autowired

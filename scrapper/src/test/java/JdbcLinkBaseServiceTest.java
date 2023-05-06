@@ -1,3 +1,5 @@
+import configuration.IntegrationEnvironment;
+import configuration.TestsConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,14 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.tinkoff.edu.java.scrapper.configuration.JdbcAccessConfiguration;
-import ru.tinkoff.edu.java.scrapper.configuration.JpaAccessConfiguration;
-import ru.tinkoff.edu.java.scrapper.domain.LinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.TgChatBaseService;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.service.JdbcLinkBaseService;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.jpa.repository.JpaLinkRepository;
 import ru.tinkoff.edu.java.scrapper.domain.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.domain.repository.ListLinkRepository;
 
@@ -28,12 +23,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@SpringBootTest(classes = {IntegrationEnvironment.IntegrationEnvironmentConfig.class, JdbcAccessConfiguration.class})
+@SpringBootTest(classes = {TestsConfiguration.class})
 @ExtendWith(SpringExtension.class)
 public class JdbcLinkBaseServiceTest extends IntegrationEnvironment {
 
     @Autowired
-    private LinkBaseService linkBaseService;
+    private JdbcLinkBaseService linkBaseService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
