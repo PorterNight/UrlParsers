@@ -4,3 +4,5 @@ link-parser/target
 scrapper/target
 scrapper-jooq/target
 **/*.iml
+grafana
+prometheus
