@@ -10,10 +10,12 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.springframework.stereotype.Service;
+import ru.tinkoff.edu.java.bot.service.MetricsService;
 import ru.tinkoff.edu.java.bot.telegramBot.Bot;
 import ru.tinkoff.edu.java.bot.telegramBot.UserMessageProcessor;
 import ru.tinkoff.edu.java.bot.telegramBot.commands.BotCommand;
 import ru.tinkoff.edu.java.bot.exceptions.TgBotUpdateSendException;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -24,11 +26,12 @@ public class BotImpl implements Bot {
     private final UserMessageProcessor userProc;
 
     private final TelegramBot bot;
+    private final MetricsService metricsService;
 
-
-    public BotImpl(UserMessageProcessor userProc, TelegramBot bot) {
+    public BotImpl(UserMessageProcessor userProc, TelegramBot bot, MetricsService metricsService) {
         this.userProc = userProc;
         this.bot = bot;
+        this.metricsService = metricsService;
     }
 
     @Override
@@ -37,6 +40,7 @@ public class BotImpl implements Bot {
             if (update.message() != null) {
                 SendMessage sendMessage = userProc.process(update);
                 execute(sendMessage.replyMarkup(simpleKeyboard()));
+                metricsService.incrementMessageCounter();
             }
         }
 
@@ -61,7 +65,6 @@ public class BotImpl implements Bot {
     public void sendUpdateLinkInfo(long chatId, String info) {
         SendMessage sendMessage = new SendMessage(chatId, info).replyMarkup(simpleKeyboard());
         bot.execute(sendMessage);
-        //throw new TgBotUpdateSendException("Failed to send message"); //for test
     }
 
     private Keyboard simpleKeyboard() {
