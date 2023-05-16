@@ -31,12 +31,4 @@ public class TelegramConfig {
         telegramBot.setUpdatesListener(bot);
         return bot;
     }
-
-//    @Bean
-//    public Bot getBot(UserMessageProcessor processor){ //, BotConfig config) {
-//        TelegramBot telegramBot = new TelegramBot(token);
-//        BotImpl bot = new BotImpl(processor, telegramBot);
-//        telegramBot.setUpdatesListener(bot);
-//        return bot;
-//    }
 }
