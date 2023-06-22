@@ -1,14 +1,30 @@
-# URL Parsers
+# Telegram bot для отслеживания ссылок
 
-TelegramBot, Stackoverflow and Github parsers for Tinkoff educaton task.
+[![botCI](https://github.com/PorterNight/UrlParsers/actions/workflows/bot.yml/badge.svg)](https://github.com/PorterNight/UrlParsers/actions/workflows/bot.yml)
+[![scrapperCI](https://github.com/PorterNight/UrlParsers/actions/workflows/scrapper.yml/badge.svg)](https://github.com/PorterNight/UrlParsers/actions/workflows/scrapper.yml)
 
+## General info
+Пользователь регистрирует ссылки с сайтов Stackoverflow и Github используя 
+команду /track. После чего telegram bot периодически отслеживает ссылки
+на предмет обновлений. При наличии обновлений присылается уведомление 
+в чат.
 
+Проект состоит из трех модулей: Scrapper (http-клиент и база данных), 
+Bot (взаимодействие с телеграм бот), Link-Parser (парсинг ссылок), 
+обмен данными между модулями происходит через HTTP запросы и Rabbit MQ.
 
-## Run tests
+### Requirements
+* Maven
+* Docker
 
-  link-parsers/src/test/java/LinkParserTest.java
-  bot/src/test/java/ListCommandUnitTest.java
-
-## Author
-
-  Gainutdinov Renat
+### Technologies
+* Spring-Boot
+* OpenAPI, Swagger
+* Liquibase
+* PostgreSQL, Jpa, Jdbc, Jooq
+* Docker
+* Mockito, Testcontainers
+* RabbitMQ
+* Metrics (Grafana, Prometheus)
+* CI/CD (Github Actions)
+* Checkstyle
