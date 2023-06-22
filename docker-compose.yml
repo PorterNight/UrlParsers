@@ -1,0 +1,89 @@
+version: '3.9'
+
+services:
+  postgresql:
+    image: postgres:14.7
+    container_name: postgresql
+    environment:
+      POSTGRES_DB: scrapper
+      POSTGRES_USER: renat
+      POSTGRES_PASSWORD: passwd
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    ports:
+      - "5432:5432"
+
+  liquibase-migrations:
+    image: liquibase/liquibase:4.18
+    depends_on:
+      - postgresql
+    command:
+      - --hub-mode=off
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgresql:5432/scrapper
+      - --username=renat
+      - --password=passwd
+      - update
+    volumes:
+      - ./migrations:/liquibase/changelog
+    networks:
+      - backend
+
+  rabbitmq:
+    image:  rabbitmq:3.11.13-management
+    container_name: rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+        - "5672:5672"
+        - "15672:15672"        
+    volumes:
+        - rmq_data:/var/lib/rabbitmq
+    networks:
+        - backend
+      
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"      
+    networks:
+      - backend
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    
+volumes:
+  pg_data:
+  rmq_data:
+  prometheus:
+  grafana:
+  
+networks:
+  backend:
+
+  
